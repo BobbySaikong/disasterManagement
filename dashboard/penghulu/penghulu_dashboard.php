@@ -1,8 +1,12 @@
 <?php
 session_start();
+if (!isset($_SESSION['user_id'])) {
+    header('Location: ../login.php');
+    exit();
+}
 
-// Mock Penghulu data
-$_SESSION['penghulu_name'] = 'Dato’ Penghulu Rahman';
+$username = $_SESSION['user_name'];
+$role = $_SESSION['user_role'];
 ?>
 
 <!DOCTYPE html>

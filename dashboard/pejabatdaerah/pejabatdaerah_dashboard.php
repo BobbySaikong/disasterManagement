@@ -1,8 +1,12 @@
 <?php
 session_start();
+if (!isset($_SESSION['user_id'])) {
+    header('Location: ../login.php');
+    exit();
+}
 
-// Mock District Officer
-$_SESSION['district_name'] = 'Pejabat Daerah Kubang Pasu';
+$username = $_SESSION['user_name'];
+$role = $_SESSION['user_role'];
 ?>
 
 <!DOCTYPE html>
@@ -13,7 +17,7 @@ $_SESSION['district_name'] = 'Pejabat Daerah Kubang Pasu';
   <title>Pejabat Daerah Dashboard - DVMD</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link rel="stylesheet" href="../css/style_villager_dashboard.css">
+  <link rel="stylesheet" href="../../css/style_villager_dashboard.css">
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
   <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -33,7 +37,7 @@ $_SESSION['district_name'] = 'Pejabat Daerah Kubang Pasu';
         <li><a href="#"><i class="fa-solid fa-file-lines"></i> Reports from Penghulu </a></li>
         <li><a href="#"><i class="fa-solid fa-map-location-dot"></i> Incident Map</a></li>
 
-        <li><a href="../logout.php"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+        <li><a href="../../logout.php"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
       </ul>
     </aside>
 

@@ -68,14 +68,16 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding-top: 100px;
     line-height: 1.6;
+
 }
 
 /* ===== CARD ===== */
 .card {
+  margin: 0 auto;
   background: #ffffff;
-  width: 380px;
+  width: 500px;
   padding: 32px;
   border-radius: 14px;
   box-shadow: 0 20px 40px rgba(0,0,0,0.35);
@@ -226,3 +228,39 @@ body {
 .link a:hover {
   text-decoration: underline;
 }
+
+
+/* ===== MEMO CAROUSEL ===== */
+.memo-carousel {
+    width: 100%;
+    max-width: 600px;
+    margin: 30px auto 0; 
+    background-color: #f7f7f7;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    text-align: center;
+    padding: 10px;
+}
+
+.memo-slide {
+    display: none;
+    height: 500px;              
+    position: relative;
+}
+
+.memo-slide.active {
+    display: block;
+}
+
+.memo-slide img {
+    width: 100%;
+    height: 95%;                 
+    border-radius: 5px;
+}
+
+.memo-slide p {
+    margin-top: 10px;
+    font-size: 16px;
+}
+
