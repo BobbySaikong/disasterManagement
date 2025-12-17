@@ -134,8 +134,8 @@ if (isset($_POST['submitreport'])) {
             <ul>
                 <li><a href="villager_dashboard.php"><i class="fa fa-home"></i> Home</a></li>
                 <li><a href="villager_report_list.php"><i class="fa fa-flag"></i> Submit Report,Emergency / Complaint</a></li>
-                <li><a href="#"><i class="fa fa-bell"></i> Alerts & Notifications</a></li>
-
+                <li><a href="villager_announce_list.php"><i class="fa fa-bell"></i> Announcement / Alerts</a></li>
+                
                 <li><a href="#"><i class="fa-solid fa-triangle-exclamation"></i> SOS</a></li>
                 <li><a href="#"><i class="fa-solid fa-map-location-dot"></i> Incident Map</a></li>
                 <li><a href="../../logout.php"><i class="fa fa-sign-out-alt"></i> Logout</a></li>
@@ -161,9 +161,9 @@ if (isset($_POST['submitreport'])) {
 
                 <!-- Alerts / Notifications -->
                 <div class="card">
-                    <h3>Alerts & Notifications</h3>
-                    <p>Receive system alerts and instructions.</p>
-                    <button>View Alerts</button>
+                    <h3>Announcement / Alerts</h3>
+                    <p>Receive system alerts and announcement .</p>
+                    <a href = "villager_announce_list.php"><button>View Alerts</button></a>
                 </div>
 
                 <!-- Map placeholder -->

@@ -151,7 +151,7 @@ $result = mysqli_query($conn, $sql);
 
         <!-- Sidebar -->
         <div class="sidebar">
-            <h2>Ketua Kampung</h2>
+            <h2>Ketua Kampung - <?php echo $username; ?></h2>
             <ul>
                 <li><a href="ketuakampung_dashboard.php"><i class="fa fa-home"></i> Home</a></li>
                 <li><a href="#"><i class="fa fa-edit"></i> Monitor Village Reports - Notify Village</a></li>
@@ -269,8 +269,6 @@ $result = mysqli_query($conn, $sql);
                     alert("Report submitted successfully!");
                 </script>
             <?php endif; ?>
-
-
 
         </div>
 

@@ -2,21 +2,48 @@
 session_start();
 include '../../dbconnect.php';
 
-
+// Access control: Only 'ketuakampung' role allowed
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'ketuakampung') {
     header('Location: ../login.php');
     exit();
 }
-
+// Get ketua info
 $username = $_SESSION['user_name'];
 $role = $_SESSION['user_role'];
 
+// Fetch count of pending reports
 $ketua_id = $_SESSION['user_id'];
 $sql = "SELECT COUNT(*) AS pending_count FROM villager_report
         WHERE ketua_id = '$ketua_id' AND report_status = 'Pending'";
 $result = mysqli_query($conn, $sql);
 $row = mysqli_fetch_assoc($result);
 $pending_count = $row['pending_count'];
+
+if (isset($_POST['submitinformation'])) {
+
+    // Handle announcement publishing here
+    $type = $_POST['announcement_type'];
+    $title = $_POST['announcement_title'];
+    $description = $_POST['announcement_description'];
+    $date = $_POST['announcement_date'];
+    $location = $_POST['announcement_location'];
+
+    // Insert into database (example table: announcements)
+    $sqlinsertannouncement = "INSERT INTO `ketua_announce`( `ketua_id`, `announce_title`, `announce_type`, `announce_desc`, `announce_date`, `announce_location`) 
+    VALUES ('$ketua_id','$title','$type','$description','$date', '$location');";
+
+    if (mysqli_query($conn, $sqlinsertannouncement)) {
+        header("Location: ketuakampung_dashboard.php?success=1");
+        exit();
+    } else {
+        echo "<script>alert('Error publishing announcement: " . mysqli_error($conn) . "');</script>";
+    }
+}
+
+
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -53,6 +80,57 @@ $pending_count = $row['pending_count'];
         padding: 5px 10px;
         font-size: 12px;
     }
+
+    #reportform {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .notificationformketua {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        width: 400px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .notificationformketua h2 {
+        text-align: center;
+        margin: 0 auto;
+    }
+
+    .notificationformketua label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .notificationformketua input,
+    .notificationformketua select,
+    .notificationformketua textarea {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+
+    }
+
+    .notificationformketua .btn {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+
+    }
 </style>
 
 <body>
@@ -63,7 +141,7 @@ $pending_count = $row['pending_count'];
             <ul>
                 <li><a href="#"><i class="fa fa-home"></i> Home</a></li>
                 <li><a href="ketua_report_list.php"><i class="fa fa-edit"></i> Monitor Village Reports - Notify Village</a></li>
-                <li><a href="#"><i class="fa fa-calendar-plus"></i> Create Community Event and Information</a></li>
+                <li><a href="#"><i class="fa fa-calendar-plus"></i> Announcement for villagers</a></li>
                 <li><a href="#"><i class="fa fa-comments"></i> Communicate with Penghulu</a></li>
                 <li><a href="#"><i class="fa-solid fa-map-location-dot"></i> Incident Map</a></li>
                 <li><a href="../../logout.php"><i class="fa fa-sign-out-alt"></i> Logout</a></li>
@@ -97,9 +175,10 @@ $pending_count = $row['pending_count'];
 
                 <!-- Create Community Event -->
                 <div class="card">
-                    <h3>Create Community Event and Information</h3>
+                    <h3>Announcement for villagers</h3>
                     <p>Publish event to villagers' dashboards.</p>
-                    <button>Create Event</button>
+                    <button class="btn" onclick="openForm()">Publish Information</button></a>
+
                 </div>
 
 
@@ -118,11 +197,62 @@ $pending_count = $row['pending_count'];
                 </div>
             </div>
         </div>
+
+        <div id="reportform">
+            <form method="POST" action="" class="notificationformketua">
+
+                <div class="form-card">
+                    <span class="close" onclick="closeForm()">&times;</span>
+                    <h2>Publish Announcement</h2>
+
+                    <label>Type</label>
+                    <select name="announcement_type" required>
+                        <option value="">Select Announcement Type</option>
+                        <option value="event">Event</option>
+                        <option value="alert">Alert</option>
+                        <option value="info">Information</option>
+                        <option value="community">Community</option>
+                    </select>
+                    
+                    <label>Title</label>
+                    <input type="text" name="announcement_title" required>
+
+                    <label>Description</label>
+                    <textarea name="announcement_description" required></textarea>
+
+                    <label>Date</label>
+                    <input type="date" name="announcement_date" required>
+
+                    <label>Location</label>
+                    <input type="text" name="announcement_location" placeholder="GPS / Address">
+
+                    
+
+                    <button class="btn" name="submitinformation">Confirm Publish</button>
+                </div>
+            </form>
+
+            <?php if (isset($_GET['success'])): ?>
+                <script>
+                    alert("Information published successfully!");
+                </script>
+            <?php endif; ?>
+
+        </div>
+
     </div>
 </body>
 
 <script>
+    var reportform = document.getElementById("reportform");
 
+    function openForm() {
+        reportform.style.display = "flex";
+    }
+
+    function closeForm() {
+        reportform.style.display = "none";
+    }
 </script>
 
 </html>

@@ -11,12 +11,16 @@ body {
 
 /* Sidebar / Drawer */
 .sidebar {
-    width: 220px;
-    background-color:  #06b6d4 ;
-    color: #fff;
-    height: 100vh;
-    padding: 20px;
-}
+            width: 220px;
+            background-color: #06b6d4;
+            color: #fff;
+            min-height: 100vh;
+            /* 🔥 FULL HEIGHT */
+            padding: 20px;
+            position: sticky;
+            /* optional but nice */
+            top: 0;
+        }
 
 .sidebar h2 {
     text-align: center;

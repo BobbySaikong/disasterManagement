@@ -92,11 +92,11 @@ $result = mysqli_query($conn, $sql);
 
         <!-- Sidebar -->
         <div class="sidebar">
-            <h2>Village</h2>
+            <h2>Village - <?php echo $username; ?></h2>
             <ul>
                 <li><a href="villager_dashboard.php"><i class="fa fa-home"></i> Home</a></li>
                 <li><a href="villager_report_list.php"><i class="fa fa-flag"></i> Submit Report,Emergency / Complaint</a></li>
-                <li><a href="#"><i class="fa fa-bell"></i> Alerts & Notifications</a></li>
+                <li><a href="villager_announce_list.php"><i class="fa fa-bell"></i> Announcement / Alerts</a></li>
 
                 <li><a href="#"><i class="fa-solid fa-triangle-exclamation"></i> SOS</a></li>
                 <li><a href="#"><i class="fa-solid fa-map-location-dot"></i> Incident Map</a></li>
