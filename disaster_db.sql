@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 29, 2025 at 02:47 AM
+-- Generation Time: Jan 04, 2026 at 03:28 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -77,7 +77,64 @@ CREATE TABLE `ketua_report` (
 INSERT INTO `ketua_report` (`kt_report_id`, `ketua_id`, `penghulu_id`, `report_title`, `report_desc`, `report_location`, `report_latitude`, `report_longitude`, `report_status`, `created_at`) VALUES
 (1, 2, 3, 'report to penghulu', 'test1', 'jalan fucking 5', 0.00000000, 0.00000000, 'Pending', '2025-12-26 11:30:46'),
 (2, 2, 3, 'report to penghulu', 'test1', 'jalan fucking 5', 0.00000000, 0.00000000, 'Pending', '2025-12-26 11:30:49'),
-(3, 2, 3, 'report to penghulu', 'test2', 'jalan fucking 5', 0.00000000, 0.00000000, 'Pending', '2025-12-26 11:33:23');
+(3, 2, 3, 'report to penghulu', 'test2', 'jalan fucking 5', 0.00000000, 0.00000000, 'Pending', '2025-12-26 11:33:23'),
+(4, 2, 3, 'Pusat lebihan', 'kapasiti penuh', 'Gua Musang', 0.00000000, 0.00000000, 'Pending', '2026-01-03 19:03:13');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `kplb_alerts`
+--
+
+CREATE TABLE `kplb_alerts` (
+  `alerts_id` int(11) NOT NULL,
+  `pejabatdaerah_id` int(11) NOT NULL,
+  `alert_title` varchar(50) NOT NULL,
+  `alert_description` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pejabatdaerah_report`
+--
+
+CREATE TABLE `pejabatdaerah_report` (
+  `pejabatdaerah_report_id` int(11) NOT NULL,
+  `pejabatdaerah_id` int(11) NOT NULL,
+  `report_title` varchar(200) NOT NULL,
+  `report_desc` text NOT NULL,
+  `report_location` varchar(200) NOT NULL,
+  `report_latitude` decimal(10,8) NOT NULL,
+  `report_longitude` decimal(11,8) NOT NULL,
+  `report_status` varchar(200) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `penghulu_report`
+--
+
+CREATE TABLE `penghulu_report` (
+  `penghulu_report_id` int(11) NOT NULL,
+  `penghulu_id` int(11) NOT NULL,
+  `pejabat_daerah_id` int(11) NOT NULL,
+  `report_title` varchar(200) NOT NULL,
+  `report_desc` text NOT NULL,
+  `report_location` varchar(200) NOT NULL,
+  `report_status` varchar(200) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `penghulu_report`
+--
+
+INSERT INTO `penghulu_report` (`penghulu_report_id`, `penghulu_id`, `pejabat_daerah_id`, `report_title`, `report_desc`, `report_location`, `report_status`, `created_at`) VALUES
+(1, 3, 4, 'pusat pemindahanan sementara', 'kapasiti penuh', 'Gua Musang', 'Pending', '2026-01-04 13:36:12');
 
 -- --------------------------------------------------------
 
@@ -107,7 +164,7 @@ INSERT INTO `sos_villager` (`sos_id`, `villager_id`, `ketua_id`, `sos_msg`, `lat
 (4, 1, 2, '', 0.00000000, 0.00000000, 'Resolved', '2025-12-25 15:06:09'),
 (5, 1, 2, '', 6.43799783, 100.19421387, 'Resolved', '2025-12-26 14:17:18'),
 (6, 1, 2, '', 6.43782726, 100.19387055, 'Resolved', '2025-12-26 17:23:16'),
-(7, 1, 0, '', 6.44516210, 100.20708847, 'Sent', '2025-12-26 18:10:54');
+(7, 1, 7, '', 6.44516210, 100.20708847, 'Resolved', '2025-12-26 18:10:54');
 
 -- --------------------------------------------------------
 
@@ -134,7 +191,8 @@ INSERT INTO `tbl_users` (`user_id`, `user_name`, `user_email`, `user_password`, 
 (3, 'penghulu', 'penghulu@gmail.com', '8cb2237d0679ca88db6464eac60da96345513964', 'penghulu', '2025-12-16 09:08:13'),
 (4, 'pejabat', 'pejabat@gmail.com', '8cb2237d0679ca88db6464eac60da96345513964', 'pejabatdaerah', '2025-12-16 09:08:58'),
 (5, 'poji', 'poji@gmail.com', '8cb2237d0679ca88db6464eac60da96345513964', 'villager', '2025-12-16 14:43:57'),
-(6, 'ahmad', 'ahmad@gmail.com', '8cb2237d0679ca88db6464eac60da96345513964', 'ketuakampung', '2025-12-16 15:27:03');
+(6, 'ahmad', 'ahmad@gmail.com', '8cb2237d0679ca88db6464eac60da96345513964', 'ketuakampung', '2025-12-16 15:27:03'),
+(7, 'bobbywong', 'bobby@gmail.com', '7c4a8d09ca3762af61e59520943dc26494f8941b', 'ketuakampung', '2025-12-29 01:52:35');
 
 -- --------------------------------------------------------
 
@@ -194,6 +252,24 @@ ALTER TABLE `ketua_report`
   ADD PRIMARY KEY (`kt_report_id`);
 
 --
+-- Indexes for table `kplb_alerts`
+--
+ALTER TABLE `kplb_alerts`
+  ADD PRIMARY KEY (`alerts_id`);
+
+--
+-- Indexes for table `pejabatdaerah_report`
+--
+ALTER TABLE `pejabatdaerah_report`
+  ADD PRIMARY KEY (`pejabatdaerah_report_id`);
+
+--
+-- Indexes for table `penghulu_report`
+--
+ALTER TABLE `penghulu_report`
+  ADD PRIMARY KEY (`penghulu_report_id`);
+
+--
 -- Indexes for table `sos_villager`
 --
 ALTER TABLE `sos_villager`
@@ -225,7 +301,25 @@ ALTER TABLE `ketua_announce`
 -- AUTO_INCREMENT for table `ketua_report`
 --
 ALTER TABLE `ketua_report`
-  MODIFY `kt_report_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `kt_report_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `kplb_alerts`
+--
+ALTER TABLE `kplb_alerts`
+  MODIFY `alerts_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `pejabatdaerah_report`
+--
+ALTER TABLE `pejabatdaerah_report`
+  MODIFY `pejabatdaerah_report_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `penghulu_report`
+--
+ALTER TABLE `penghulu_report`
+  MODIFY `penghulu_report_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `sos_villager`
@@ -237,7 +331,7 @@ ALTER TABLE `sos_villager`
 -- AUTO_INCREMENT for table `tbl_users`
 --
 ALTER TABLE `tbl_users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `villager_report`
