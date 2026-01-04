@@ -11,7 +11,7 @@ $user_id = $_SESSION['user_id'];
 $username = $_SESSION['user_name'];
 $role = $_SESSION['user_role'];
 
-//map 
+//map
 // Villager reports
 $report_sql = "SELECT r.latitude, r.longitude, r.report_title, r.report_type, r.report_status,
                 u.user_name AS submitted_by

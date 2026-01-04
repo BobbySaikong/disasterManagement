@@ -18,7 +18,8 @@ $role = $_SESSION['user_role'];
 $report_sql = "SELECT r.latitude, r.longitude, r.report_title, r.report_type, r.report_status,
                 u.user_name AS submitted_by
                 FROM villager_report r
-                JOIN tbl_users u ON r.villager_id = u.user_id
+                JOIN tbl_users u ON
+                r.villager_id = u.user_id
                 WHERE r.report_status = 'Pending'";
 $report_result = mysqli_query($conn, $report_sql);
 $reports = [];
@@ -58,6 +59,8 @@ $pinreports_json = json_encode($allPins);
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
   <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
 
 <body>
@@ -90,7 +93,7 @@ $pinreports_json = json_encode($allPins);
 
       <!-- Header -->
       <div class="header">
-        <h1>Welcome,<?php echo $username, $user_id, $role; ?></h1>
+        <h1>Welcome, <?php echo $role, $user_id; ?></h1>
         <p>Digital Village Management Dashboard (DVMD)</p>
       </div>
 
@@ -101,14 +104,14 @@ $pinreports_json = json_encode($allPins);
         <div class="card">
           <h3>Access and monitor All Villages</h3>
           <p>View and manage report for all villages in the district.</p>
-          <button>View Villages</button>
+          <a href = "/ketua_report_list.php" ><button>View Villages</button></a>
         </div>
 
         <!-- Aid distribution -->
         <div class="card">
           <h3>Aid Distribution Management</h3>
           <p>Initiate and track aid distribution to affected areas.</p>
-          <a href = "<button>Manage Aid</button>
+          <a href = "#"><button>Manage Aid</button></a>
         </div>
 
 
@@ -116,14 +119,15 @@ $pinreports_json = json_encode($allPins);
         <div class="card">
           <h3> Reports from Penghulu</h3>
           <p>communicate with penghulu and Review reports received from Penghulu.</p>
-          <a href= "pejabatdaerah_penghulu_report_list.php"><button>View Reports</button>/a>
+          <!--create pejabatdaerah-penghulu report list-->
+          <a href= "pejabatdaerah_penghulu_report_list.php"><button>View Reports</button></a>
         </div>
 
         <!-- Emergency commands -->
         <div class="card critical">
           <h3> Disaster Commands</h3>
           <p>Issue district-level emergency commands , Send notifications to all villages and officials.</p>
-          <a href<button class="danger-btn">Issue Command</button>
+          <a href= "#"><button class="danger-btn">Issue Command</button></a>
         </div>
 
 
@@ -131,13 +135,32 @@ $pinreports_json = json_encode($allPins);
         <div class="card">
           <h3>Incident Map</h3>
           <p>Track emergencies using GPS/maps.</p>
-          <div id="pejabatdaerah-map" class="map-placeholder" onclick="openFullMap()">
-          </div>
+          <div id="incident-map" class="map-placeholder" onclick="openFullMap()"></div>
         </div>
+
+
 
       </section>
     </main>
   </div>
+
+  <!-- Map Modal -->
+  <div id="mapModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:999;">
+      <div style="background:#fff; width:90%; max-width:600px; height:400px; margin:50px auto; padding:10px;">
+          <h3>Click on map to select location</h3>
+          <div id="map" style="height:300px;"></div>
+          <button onclick="closeMap()">Done</button>
+      </div>
+  </div>
+
+  <!-- Fullscreen Map Modal -->
+  <div id="fullMapModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:9999;">
+      <div style="position:relative; width:100%; height:100%;">
+          <span style="position:absolute; top:10px; right:20px; font-size:30px; color:white; cursor:pointer; z-index:1000;" onclick="closeFullMap()">&times;</span>
+          <div id="fullIncidentMap" style="width:100%; height:100%;"></div>
+      </div>
+  </div>
+
 </body>
 
 <!-- Map Script -->

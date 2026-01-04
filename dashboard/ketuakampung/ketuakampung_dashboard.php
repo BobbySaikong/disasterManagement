@@ -29,7 +29,7 @@ if (isset($_POST['submitinformation'])) {
     $location = $_POST['announcement_location'];
 
     // Insert into database (example table: announcements)
-    $sqlinsertannouncement = "INSERT INTO `ketua_announce`( `ketua_id`, `announce_title`, `announce_type`, `announce_desc`, `announce_date`, `announce_location`) 
+    $sqlinsertannouncement = "INSERT INTO `ketua_announce`( `ketua_id`, `announce_title`, `announce_type`, `announce_desc`, `announce_date`, `announce_location`)
     VALUES ('$ketua_id','$title','$type','$description','$date', '$location');";
 
     if (mysqli_query($conn, $sqlinsertannouncement)) {
@@ -50,7 +50,7 @@ if (isset($_POST['submit_to_penghulu'])) {
     $location = $_POST['kp_location'];
     $penghulu_id = $_POST['penghulu_id'];
 
-    $sql = "INSERT INTO `ketua_report`(`ketua_id`, `penghulu_id`, `report_title`, `report_desc`, `report_location`, `report_status`) 
+    $sql = "INSERT INTO `ketua_report`(`ketua_id`, `penghulu_id`, `report_title`, `report_desc`, `report_location`, `report_status`)
     VALUES ('$ketua_id','$penghulu_id','$title','$desc','$location','Pending')";
 
     if (mysqli_query($conn, $sql)) {
@@ -61,7 +61,7 @@ if (isset($_POST['submit_to_penghulu'])) {
     }
 }
 
-//map 
+//map
 // Villager reports
 $report_sql = "SELECT r.latitude, r.longitude, r.report_title, r.report_type, r.report_status,
                 u.user_name AS submitted_by
@@ -207,7 +207,7 @@ $pinreports_json = json_encode($allPins);
         <div class="main">
             <!-- Header -->
             <div class="header">
-                <h1>Welcome, <?php echo $username;  ?> !</h1>
+                <h1>Welcome, <?php echo $username; ?> !</h1>
             </div>
 
             <!-- Dashboard content -->
@@ -221,7 +221,7 @@ $pinreports_json = json_encode($allPins);
                     <a href="ketua_report_list.php" class="btn-with-badge">
                         View Reports
                         <?php if ($pending_count > 0): ?>
-                            <span class="badge"><?= $pending_count ?></span>
+                                        <span class="badge"><?= $pending_count ?></span>
                         <?php endif; ?>
                     </a>
 
@@ -289,9 +289,9 @@ $pinreports_json = json_encode($allPins);
             </form>
 
             <?php if (isset($_GET['success'])): ?>
-                <script>
-                    alert("Information published successfully!");
-                </script>
+                            <script>
+                                alert("Information published successfully!");
+                            </script>
             <?php endif; ?>
 
         </div>
@@ -313,9 +313,9 @@ $pinreports_json = json_encode($allPins);
                 <select name="penghulu_id" required>
                     <option value="">Select Penghulu</option>
                     <?php while ($rowP = mysqli_fetch_assoc($resultPenghulu)): ?>
-                        <option value="<?= htmlspecialchars($rowP['user_id']) ?>">
-                            <?= htmlspecialchars($rowP['user_name']) ?>
-                        </option>
+                                    <option value="<?= htmlspecialchars($rowP['user_id']) ?>">
+                                        <?= htmlspecialchars($rowP['user_name']) ?>
+                                    </option>
                     <?php endwhile; ?>
                 </select>
 
@@ -324,9 +324,9 @@ $pinreports_json = json_encode($allPins);
             </form>
 
             <?php if (isset($_GET['success_reportpenghulu'])): ?>
-                <script>
-                    alert("report to penghulu successfully!");
-                </script>
+                            <script>
+                                alert("report to penghulu successfully!");
+                            </script>
             <?php endif; ?>
 
         </div>
