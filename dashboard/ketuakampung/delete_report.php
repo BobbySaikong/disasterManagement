@@ -14,7 +14,7 @@ $sql = "
     WHERE report_id = '$report_id'
 ";
 
-mysqli_query($conn, $sql);
+mysqli_query($db, $sql);
 
 header("Location: ketua_report_list.php");
 exit();

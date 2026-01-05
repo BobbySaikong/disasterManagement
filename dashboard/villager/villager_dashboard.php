@@ -12,9 +12,9 @@ $username = $_SESSION['user_name'];
 $role = $_SESSION['user_role'];
 
 $sqlketua = "SELECT * FROM tbl_users WHERE user_role = 'ketuakampung' ";
-$resultketua = mysqli_query($conn, $sqlketua);
+$resultketua = mysqli_query($db, $sqlketua);
 
-//insert report to database 
+//insert report to database
 if (isset($_POST['submitreport'])) {
 
     $title = $_POST['title'];
@@ -38,15 +38,15 @@ if (isset($_POST['submitreport'])) {
     }
 
 
-    $sqlinsertreport = "INSERT INTO `villager_report`(`villager_id`, `ketua_id`,  `report_title`, `report_type`, `report_desc`, `report_phone`, 
-    `report_date`,  `report_location`, `latitude`, `longitude`, `report_status`) 
+    $sqlinsertreport = "INSERT INTO `villager_report`(`villager_id`, `ketua_id`,  `report_title`, `report_type`, `report_desc`, `report_phone`,
+    `report_date`,  `report_location`, `latitude`, `longitude`, `report_status`)
             VALUES ('$villager_id','$ketua_id', '$title', '$report_type', '$description', '$phone', '$date', '$location', '$lat', '$lng', '$status')";
 
-    if (mysqli_query($conn, $sqlinsertreport)) {
+    if (mysqli_query($db, $sqlinsertreport)) {
         header("Location: villager_dashboard.php?success=1");
         exit();
     } else {
-        echo "<script>alert('Error submitting report: " . mysqli_error($conn) . "');</script>";
+        echo "<script>alert('Error submitting report: " . mysqli_error($db) . "');</script>";
     }
 }
 
@@ -55,14 +55,14 @@ if (isset($_POST['sosconfirm'])) {
     $lng = $_POST['sos_longitude'];
     // Insert SOS logic here
     $sos_status = 'Sent';
-    $sos_sql = "INSERT INTO `sos_villager`( `villager_id`, `ketua_id`, `latitude`, `longitude`, `sos_status`) 
+    $sos_sql = "INSERT INTO `sos_villager`( `villager_id`, `ketua_id`, `latitude`, `longitude`, `sos_status`)
     VALUES ('$villager_id',' ',$lat,$lng,'$sos_status');";
 
-    if (mysqli_query($conn, $sos_sql)) {
+    if (mysqli_query($db, $sos_sql)) {
         header("Location: villager_dashboard.php?success_sos=1");
         exit();
     } else {
-        echo "<script>alert('Error sending SOS: " . mysqli_error($conn) . "');</script>";
+        echo "<script>alert('Error sending SOS: " . mysqli_error($db) . "');</script>";
     }
 }
 
@@ -70,9 +70,9 @@ if (isset($_POST['sosconfirm'])) {
 $pinreport_sql = "SELECT r.latitude, r.longitude, r.report_title, r.report_type, r.report_status,
                 u.user_name AS submitted_by
                 FROM villager_report r
-                JOIN tbl_users u ON r.villager_id = u.user_id 
+                JOIN tbl_users u ON r.villager_id = u.user_id
                 WHERE r.report_status = 'Pending'";
-$pinreport_result = mysqli_query($conn, $pinreport_sql);
+$pinreport_result = mysqli_query($db, $pinreport_sql);
 $pinreports = [];
 while ($row = mysqli_fetch_assoc($pinreport_result)) {
     $row['type'] = 'report';
@@ -83,7 +83,7 @@ $sos_sql = "SELECT s.latitude, s.longitude, s.sos_status, u.user_name AS sent_by
             FROM sos_villager s
             JOIN tbl_users u ON s.villager_id = u.user_id WHERE s.sos_status = 'Sent'";
 
-$sos_result = mysqli_query($conn, $sos_sql);
+$sos_result = mysqli_query($db, $sos_sql);
 $sos = [];
 while ($row = mysqli_fetch_assoc($sos_result)) {
     $row['type'] = 'sos';
@@ -314,9 +314,9 @@ $pinreports_json = json_encode($allPins);
                         <option value="">Select Ketua Kampung</option>
 
                         <?php while ($rowketua = mysqli_fetch_assoc($resultketua)): ?>
-                            <option value="<?= htmlspecialchars($rowketua['user_id']) ?>">
-                                <?= htmlspecialchars($rowketua['user_name']) ?>
-                            </option>
+                                <option value="<?= htmlspecialchars($rowketua['user_id']) ?>">
+                                    <?= htmlspecialchars($rowketua['user_name']) ?>
+                                </option>
                         <?php endwhile; ?>
 
                     </select>
@@ -326,9 +326,9 @@ $pinreports_json = json_encode($allPins);
             </form>
 
             <?php if (isset($_GET['success'])): ?>
-                <script>
-                    alert("Report submitted successfully!");
-                </script>
+                    <script>
+                        alert("Report submitted successfully!");
+                    </script>
             <?php endif; ?>
 
         </div>
@@ -354,9 +354,9 @@ $pinreports_json = json_encode($allPins);
             </form>
 
             <?php if (isset($_GET['success_sos'])): ?>
-                <script>
-                    alert("Sos submitted successfully!");
-                </script>
+                    <script>
+                        alert("Sos submitted successfully!");
+                    </script>
             <?php endif; ?>
 
         </div>

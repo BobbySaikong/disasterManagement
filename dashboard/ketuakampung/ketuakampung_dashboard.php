@@ -15,7 +15,7 @@ $role = $_SESSION['user_role'];
 $ketua_id = $_SESSION['user_id'];
 $sql = "SELECT COUNT(*) AS pending_count FROM villager_report
         WHERE ketua_id = '$ketua_id' AND report_status = 'Pending'";
-$result = mysqli_query($conn, $sql);
+$result = mysqli_query($db, $sql);
 $row = mysqli_fetch_assoc($result);
 $pending_count = $row['pending_count'];
 
@@ -32,15 +32,16 @@ if (isset($_POST['submitinformation'])) {
     $sqlinsertannouncement = "INSERT INTO `ketua_announce`( `ketua_id`, `announce_title`, `announce_type`, `announce_desc`, `announce_date`, `announce_location`)
     VALUES ('$ketua_id','$title','$type','$description','$date', '$location');";
 
-    if (mysqli_query($conn, $sqlinsertannouncement)) {
+    if (mysqli_query($db, $sqlinsertannouncement)) {
         header("Location: ketuakampung_dashboard.php?success=1");
         exit();
     } else {
-        echo "<script>alert('Error publishing announcement: " . mysqli_error($conn) . "');</script>";
+        echo "<script>alert('Error publishing announcement: " . mysqli_error($db) . "');</script>";
     }
 }
+
 $sqlPenghulu = "SELECT user_id, user_name FROM tbl_users WHERE user_role = 'penghulu'";
-$resultPenghulu = mysqli_query($conn, $sqlPenghulu);
+$resultPenghulu = mysqli_query($db, $sqlPenghulu);
 
 
 if (isset($_POST['submit_to_penghulu'])) {
@@ -53,11 +54,11 @@ if (isset($_POST['submit_to_penghulu'])) {
     $sql = "INSERT INTO `ketua_report`(`ketua_id`, `penghulu_id`, `report_title`, `report_desc`, `report_location`, `report_status`)
     VALUES ('$ketua_id','$penghulu_id','$title','$desc','$location','Pending')";
 
-    if (mysqli_query($conn, $sql)) {
+    if (mysqli_query($db, $sql)) {
         header("Location: ketuakampung_dashboard.php?success_reportpenghulu=1");
         exit();
     } else {
-        echo "<script>alert('Error submitting report to penghulu: " . mysqli_error($conn) . "');</script>";
+        echo "<script>alert('Error submitting report to penghulu: " . mysqli_error($db) . "');</script>";
     }
 }
 
@@ -68,7 +69,7 @@ $report_sql = "SELECT r.latitude, r.longitude, r.report_title, r.report_type, r.
                 FROM villager_report r
                 JOIN tbl_users u ON r.villager_id = u.user_id
                 WHERE r.report_status = 'Pending'";
-$report_result = mysqli_query($conn, $report_sql);
+$report_result = mysqli_query($db, $report_sql);
 $reports = [];
 while ($row = mysqli_fetch_assoc($report_result)) {
     $row['type'] = 'report';
@@ -80,7 +81,7 @@ $sos_sql = "SELECT s.latitude, s.longitude, s.sos_status, u.user_name AS sent_by
             FROM sos_villager s
             JOIN tbl_users u ON s.villager_id = u.user_id
             WHERE s.sos_status = 'Sent'";
-$sos_result = mysqli_query($conn, $sos_sql);
+$sos_result = mysqli_query($db, $sos_sql);
 $sos = [];
 while ($row = mysqli_fetch_assoc($sos_result)) {
     $row['type'] = 'sos';
@@ -190,15 +191,8 @@ $pinreports_json = json_encode($allPins);
         <div class="sidebar">
             <h2>Ketua Kampung</h2>
             <ul>
-                <li><a href="#"><i class="fa fa-home"></i> Home</a></li>
+                <li><a href="ketuakampung_dashboard.php"><i class="fa fa-home"></i> Home</a></li>
                 <li><a href="ketua_report_list.php"><i class="fa fa-edit"></i> Monitor Village Reports - Notify Village</a></li>
-                <li><a href="#"><i class="fa fa-calendar-plus"></i> Announcement for villagers</a></li>
-                <li><a href="#"><i class="fa fa-comments"></i> Communicate with Penghulu</a></li>
-                <li>
-                    <a href="javascript:void(0)" onclick="openFullMap()">
-                        <i class="fa-solid fa-map-location-dot"></i> Incident Map
-                    </a>
-                </li>
                 <li><a href="../../logout.php"><i class="fa fa-sign-out-alt"></i> Logout</a></li>
             </ul>
         </div>
@@ -221,7 +215,7 @@ $pinreports_json = json_encode($allPins);
                     <a href="ketua_report_list.php" class="btn-with-badge">
                         View Reports
                         <?php if ($pending_count > 0): ?>
-                                        <span class="badge"><?= $pending_count ?></span>
+                                                                    <span class="badge"><?= $pending_count ?></span>
                         <?php endif; ?>
                     </a>
 
@@ -232,16 +226,16 @@ $pinreports_json = json_encode($allPins);
                 <div class="card">
                     <h3>Announcement for villagers</h3>
                     <p>Publish event to villagers' dashboards.</p>
-                    <button class="btn" onclick="openForm()">Publish Information</button></a>
+                    <button class="btn" onclick="openForm()">Publish Announcement</button></a>
 
                 </div>
 
 
                 <!-- Communicate with Penghulu -->
-                <div class="card">
+                <div class="card critical">
                     <h3>Report to Penghulu</h3>
                     <p>submit report to Penghulu.</p>
-                    <button class="btn" onclick="openPenghuluForm()">Open Chat</button>
+                    <button class="btn" onclick="openPenghuluForm()">Open Form</button>
                 </div>
 
                 <!-- Map / Incident Location -->
@@ -252,6 +246,8 @@ $pinreports_json = json_encode($allPins);
                 </div>
 
             </div>
+
+
         </div>
 
         <div id="reportform">
@@ -289,9 +285,9 @@ $pinreports_json = json_encode($allPins);
             </form>
 
             <?php if (isset($_GET['success'])): ?>
-                            <script>
-                                alert("Information published successfully!");
-                            </script>
+                                                        <script>
+                                                            alert("Information published successfully!");
+                                                        </script>
             <?php endif; ?>
 
         </div>
@@ -313,9 +309,9 @@ $pinreports_json = json_encode($allPins);
                 <select name="penghulu_id" required>
                     <option value="">Select Penghulu</option>
                     <?php while ($rowP = mysqli_fetch_assoc($resultPenghulu)): ?>
-                                    <option value="<?= htmlspecialchars($rowP['user_id']) ?>">
-                                        <?= htmlspecialchars($rowP['user_name']) ?>
-                                    </option>
+                                                                <option value="<?= htmlspecialchars($rowP['user_id']) ?>">
+                                                                    <?= htmlspecialchars($rowP['user_name']) ?>
+                                                                </option>
                     <?php endwhile; ?>
                 </select>
 
@@ -324,9 +320,9 @@ $pinreports_json = json_encode($allPins);
             </form>
 
             <?php if (isset($_GET['success_reportpenghulu'])): ?>
-                            <script>
-                                alert("report to penghulu successfully!");
-                            </script>
+                                                        <script>
+                                                            alert("report to penghulu successfully!");
+                                                        </script>
             <?php endif; ?>
 
         </div>

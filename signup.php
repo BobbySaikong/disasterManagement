@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['signup'])) {
     } else {
 
         // Check email exists (Prepared Statement) - more secure
-        $stmt = $conn->prepare("SELECT user_email FROM tbl_users WHERE user_email = ?");
+        $stmt = $db->prepare("SELECT user_email FROM tbl_users WHERE user_email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $stmt->store_result();
@@ -32,8 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['signup'])) {
         } else {
 
             // Insert user
-            $stmt = $conn->prepare(
-                "INSERT INTO tbl_users (user_name, user_email, user_password, user_role) 
+            $stmt = $db->prepare(
+                "INSERT INTO tbl_users (user_name, user_email, user_password, user_role)
                 VALUES (?, ?, ?, ?)"
             );
             $stmt->bind_param("ssss", $username, $email, $hashedPassword, $role);

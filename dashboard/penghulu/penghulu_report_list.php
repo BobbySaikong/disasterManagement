@@ -23,7 +23,7 @@ $sql = "
 ";
 
 
-$result = mysqli_query($conn, $sql);
+$result = mysqli_query($db, $sql);
 ?>
 
 <!DOCTYPE html>
@@ -35,7 +35,12 @@ $result = mysqli_query($conn, $sql);
 
     <link rel="stylesheet" href="../../css/style_villager_dashboard.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+
+
 
     <style>
         .table-container {
@@ -85,6 +90,7 @@ $result = mysqli_query($conn, $sql);
             font-weight: bold;
         }
     </style>
+
 </head>
 
 <body>
@@ -95,12 +101,11 @@ $result = mysqli_query($conn, $sql);
         <div class="sidebar">
             <h2>Penghulu - <?php echo $username; ?></h2>
             <ul>
-                <li><a href="penghulu_dashboard.php"><i class="fa fa-home"></i> Home</a></li>
-            <li><a href=""><i class="fa-solid fa-city"></i> Monitor All Villages - Review Issues - Notify Ketua Kampung</a></li>
+            <li><a href="penghulu_dashboard.php"><i class="fa fa-home"></i> Home</a></li>
+            <li><a href="penghulu_report_list.php"><i class="fa-solid fa-city"></i> Monitor All Villages - Review Issues - Notify Ketua Kampung</a></li>
             <li><a href="penghulu_ketua_report_list.php"><i class="fa-solid fa-file-lines"></i> Reports from Ketua Kampung</a></li>
-            <li><a href="#"><i class="fa fa-comments"></i> Communicate with Pejabat Daerah</a></li>
-            <li><a href="#"><i class="fa-solid fa-map-location-dot"></i> Incident Map</a></li>
-            
+
+
             <li><a href="../../logout.php"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
             </ul>
         </div>
@@ -127,42 +132,42 @@ $result = mysqli_query($conn, $sql);
                         <th>Ketua Kampung</th>
                         <th>Status</th>
                         <th>Feedback</th>
-                        
+
                     </tr>
 
                     <?php if (mysqli_num_rows($result) > 0): ?>
-                        <?php $i = 1;
-                        while ($row = mysqli_fetch_assoc($result)): ?>
-                            <tr>
-                                <td><?= $i++ ?></td>
-                                <td><?= htmlspecialchars($row['report_title']) ?></td>
-                                <td><?= htmlspecialchars($row['villager_name']) ?></td>
-                                <td><?= htmlspecialchars($row['report_type']) ?></td>
-                                <td><?= htmlspecialchars($row['report_desc']) ?></td>
-                                <td><?= htmlspecialchars($row['report_date']) ?></td>
-                                <td><?= htmlspecialchars($row['report_location']) ?></td>
-                                <td><?= htmlspecialchars($row['ketua_name']) ?></td>
-                                <td class="status-<?= strtolower($row['report_status']) ?>">
-                                    <?= htmlspecialchars($row['report_status']) ?>
-                                </td>
-                                <td>
-                                    <button onclick="showFeedback(
+                                                                                                                                    <?php $i = 1;
+                                                                                                                                    while ($row = mysqli_fetch_assoc($result)): ?>
+                                                                                                                                                                                                                                                    <tr>
+                                                                                                                                                                                                                                                        <td><?= $i++ ?></td>
+                                                                                                                                                                                                                                                        <td><?= htmlspecialchars($row['report_title']) ?></td>
+                                                                                                                                                                                                                                                        <td><?= htmlspecialchars($row['villager_name']) ?></td>
+                                                                                                                                                                                                                                                        <td><?= htmlspecialchars($row['report_type']) ?></td>
+                                                                                                                                                                                                                                                        <td><?= htmlspecialchars($row['report_desc']) ?></td>
+                                                                                                                                                                                                                                                        <td><?= htmlspecialchars($row['report_date']) ?></td>
+                                                                                                                                                                                                                                                        <td><?= htmlspecialchars($row['report_location']) ?></td>
+                                                                                                                                                                                                                                                        <td><?= htmlspecialchars($row['ketua_name']) ?></td>
+                                                                                                                                                                                                                                                        <td class="status-<?= strtolower($row['report_status']) ?>">
+                                                                                                                                                                                                                                                            <?= htmlspecialchars($row['report_status']) ?>
+                                                                                                                                                                                                                                                        </td>
+                                                                                                                                                                                                                                                        <td>
+                                                                                                                                                                                                                                                            <button onclick="showFeedback(
                                             '<?= htmlspecialchars(addslashes($row['report_title'])) ?>',
                                             '<?= htmlspecialchars(addslashes($row['report_feedback'])) ?>',
                                             '<?= $row['report_status'] ?>'
                                         )">
-                                        View
-                                    </button>
+                                                                                                                                                                                                                                                                View
+                                                                                                                                                                                                                                                            </button>
 
-                                </td>
-                                
+                                                                                                                                                                                                                                                        </td>
 
-                            </tr>
-                        <?php endwhile; ?>
+
+                                                                                                                                                                                                                                                    </tr>
+                                                                                                                                    <?php endwhile; ?>
                     <?php else: ?>
-                        <tr>
-                            <td colspan="6" style="text-align:center;">No reports submitted yet</td>
-                        </tr>
+                                                                                                                                    <tr>
+                                                                                                                                        <td colspan="6" style="text-align:center;">No reports submitted yet</td>
+                                                                                                                                    </tr>
                     <?php endif; ?>
                 </table>
             </div>
@@ -195,6 +200,8 @@ $result = mysqli_query($conn, $sql);
     </script>
 
 
+
 </body>
+
 
 </html>

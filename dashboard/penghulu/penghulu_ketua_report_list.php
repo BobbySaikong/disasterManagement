@@ -12,7 +12,7 @@ $username = $_SESSION['user_name'];
 
 // Fetch reports for this villager ONLY
 $sql = "
-    SELECT 
+    SELECT
         r.*,
         k.user_name AS ketua_name
     FROM ketua_report r
@@ -21,21 +21,21 @@ $sql = "
 ";
 
 
-$result = mysqli_query($conn, $sql);
+$result = mysqli_query($db, $sql);
 // Handle Approve, Reject, Delete actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $kt_report_id = $_POST['kt_kt_report_id'];
 
     // Approve
     if (isset($_POST['approve'])) {
-        $message = mysqli_real_escape_string($conn, $_POST['approve_msg'] ?? '');
-        mysqli_query($conn, "UPDATE ketua_report SET report_status='Approved' WHERE kt_report_id='$kt_report_id'");
+        $message = mysqli_real_escape_string($db, $_POST['approve_msg'] ?? '');
+        mysqli_query($db, "UPDATE ketua_report SET report_status='Approved' WHERE kt_report_id='$kt_report_id'");
 
         // Optional: Insert message to Ketua
         if (!empty($message)) {
-            $report = mysqli_fetch_assoc(mysqli_query($conn, "SELECT ketua_id FROM ketua_report WHERE kt_report_id='$kt_report_id'"));
+            $report = mysqli_fetch_assoc(mysqli_query($db, "SELECT ketua_id FROM ketua_report WHERE kt_report_id='$kt_report_id'"));
             $ketua_id = $report['ketua_id'];
-            mysqli_query($conn, "INSERT INTO report_messages (kt_report_id, sender_role, receiver_id, message, created_at)
+            mysqli_query($db, "INSERT INTO report_messages (kt_report_id, sender_role, receiver_id, message, created_at)
                                 VALUES ('$kt_report_id', 'penghulu', '$ketua_id', '$message', NOW())");
         }
         header("Location: penghulu_ketua_report_list.php");
@@ -44,14 +44,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Reject
     if (isset($_POST['reject'])) {
-        mysqli_query($conn, "UPDATE ketua_report SET report_status='Rejected' WHERE kt_report_id='$kt_report_id'");
+        mysqli_query($db, "UPDATE ketua_report SET report_status='Rejected' WHERE kt_report_id='$kt_report_id'");
         header("Location: penghulu_ketua_report_list.php");
         exit();
     }
 
     // Delete
     if (isset($_POST['delete'])) {
-        mysqli_query($conn, "DELETE FROM ketua_report WHERE kt_report_id='$kt_report_id'");
+        mysqli_query($db, "DELETE FROM ketua_report WHERE kt_report_id='$kt_report_id'");
         header("Location: penghulu_ketua_report_list.php");
         exit();
     }
@@ -104,8 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <ul>
                 <li><a href="penghulu_dashboard.php"><i class="fa fa-home"></i> Home</a></li>
                 <li><a href="penghulu_report_list.php"><i class="fa-solid fa-city"></i> Monitor All Villages - Review Issues - Notify Ketua Kampung</a></li>
-                <li><a href="#"><i class="fa-solid fa-file-lines"></i> Reports from Ketua Kampung</a></li>
-                <li><a href="#"><i class="fa fa-comments"></i> Communicate with Pejabat Daerah</a></li>
+                <li><a href="penghulu_ketua_report_list.php"><i class="fa-solid fa-file-lines"></i> Reports from Ketua Kampung</a></li>
                 <li><a href="../../logout.php"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
             </ul>
         </div>
@@ -132,36 +131,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <?php $i = 1;
                     while ($row = mysqli_fetch_assoc($result)): ?>
-                        <tr>
-                            <td><?= $i++ ?></td>
-                            <td><?= htmlspecialchars($row['ketua_name']) ?></td>
-                            <td><?= htmlspecialchars($row['report_title']) ?></td>
-                            <td><?= htmlspecialchars($row['report_desc']) ?></td>
-                            <td><?= htmlspecialchars($row['report_location']) ?></td>
-                            <td><?= htmlspecialchars($row['report_status']) ?></td>
-                            <td><?= htmlspecialchars($row['created_at']) ?></td>
-                            <td>
-                                <!-- Approve -->
-                                <form action="" method="POST" style="display:inline;">
-                                    <input type="hidden" name="kt_report_id" value="<?= $row['kt_report_id'] ?>">
-                                    <input type="text" name="approve_msg" placeholder="Message to Ketua" style="width:150px;">
-                                    <button type="submit" name="approve" style="background:green;color:white;">Approve</button>
-                                </form>
+                                                <tr>
+                                                    <td><?= $i++ ?></td>
+                                                    <td><?= htmlspecialchars($row['ketua_name']) ?></td>
+                                                    <td><?= htmlspecialchars($row['report_title']) ?></td>
+                                                    <td><?= htmlspecialchars($row['report_desc']) ?></td>
+                                                    <td><?= htmlspecialchars($row['report_location']) ?></td>
+                                                    <td><?= htmlspecialchars($row['report_status']) ?></td>
+                                                    <td><?= htmlspecialchars($row['created_at']) ?></td>
+                                                    <td>
+                                                        <!-- Approve -->
+                                                        <form action="" method="POST" style="display:inline;">
+                                                            <input type="hidden" name="kt_report_id" value="<?= $row['kt_report_id'] ?>">
+                                                            <input type="text" name="approve_msg" placeholder="Message to Ketua" style="width:150px;">
+                                                            <button type="submit" name="approve" style="background:green;color:white;">Approve</button>
+                                                        </form>
 
-                                <!-- Reject -->
-                                <form action="" method="POST" style="display:inline;">
-                                    <input type="hidden" name="kt_report_id" value="<?= $row['kt_report_id'] ?>">
-                                    <button type="submit" name="reject" style="background:orange;color:white;">Reject</button>
-                                </form>
+                                                        <!-- Reject -->
+                                                        <form action="" method="POST" style="display:inline;">
+                                                            <input type="hidden" name="kt_report_id" value="<?= $row['kt_report_id'] ?>">
+                                                            <button type="submit" name="reject" style="background:orange;color:white;">Reject</button>
+                                                        </form>
 
-                                <!-- Delete -->
-                                <form action="" method="POST" style="display:inline;">
-                                    <input type="hidden" name="kt_report_id" value="<?= $row['kt_report_id'] ?>">
-                                    <button type="submit" name="delete" style="background:red;color:white;">Delete</button>
-                                </form>
-                            </td>
+                                                        <!-- Delete -->
+                                                        <form action="" method="POST" style="display:inline;">
+                                                            <input type="hidden" name="kt_report_id" value="<?= $row['kt_report_id'] ?>">
+                                                            <button type="submit" name="delete" style="background:red;color:white;">Delete</button>
+                                                        </form>
+                                                    </td>
 
-                        </tr>
+                                                </tr>
                     <?php endwhile; ?>
                 </table>
             </div>

@@ -10,24 +10,24 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'villager') {
 $villager_id = $_SESSION['user_id'];
 $username = $_SESSION['user_name'];
 
-function getAnnouncements($conn, $type)
+function getAnnouncements($db, $type)
 {
     $sql = "
-        SELECT 
-        a.*, 
+        SELECT
+        a.*,
         u.user_name AS published_by
         FROM ketua_announce a
         JOIN tbl_users u ON a.ketua_id = u.user_id
         WHERE a.announce_type = '$type'
         ORDER BY a.announce_date ASC
     ";
-    return mysqli_query($conn, $sql);
+    return mysqli_query($db, $sql);
 }
 
-$alerts     = getAnnouncements($conn, 'alert');
-$events     = getAnnouncements($conn, 'event');
-$infos      = getAnnouncements($conn, 'info');
-$community  = getAnnouncements($conn, 'community');
+$alerts = getAnnouncements($db, 'alert');
+$events = getAnnouncements($db, 'event');
+$infos = getAnnouncements($db, 'info');
+$community = getAnnouncements($db, 'community');
 
 // Function to get header color based on announcement type
 function renderTable($result)
@@ -161,7 +161,7 @@ function renderTable($result)
             padding: 15px;
         }
 
-        
+
     </style>
 </head>
 

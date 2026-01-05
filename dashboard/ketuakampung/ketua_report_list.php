@@ -20,7 +20,7 @@ $sql = "
     FROM villager_report rpt
     JOIN tbl_users u ON rpt.villager_id = u.user_id
     WHERE rpt.ketua_id = '$ketua_id'
-   ORDER BY 
+   ORDER BY
         CASE rpt.report_status
             WHEN 'Pending' THEN 1
             ELSE 2
@@ -29,18 +29,18 @@ $sql = "
 ";
 
 
-$result = mysqli_query($conn, $sql);
+$result = mysqli_query($db, $sql);
 
 // Function to get header color based on announcement type
 
-$sqlsos =  "SELECT 
+$sqlsos = "SELECT
         s.*,
         u.user_name AS villager_name
     FROM sos_villager s
     JOIN tbl_users u ON s.villager_id = u.user_id
     WHERE s.sos_status = 'Sent'
     ORDER BY s.created_at ASC";
-$resultsos = mysqli_query($conn, $sqlsos);
+$resultsos = mysqli_query($db, $sqlsos);
 $sosList = mysqli_fetch_all($resultsos, MYSQLI_ASSOC);
 
 
@@ -212,10 +212,7 @@ $sosList = mysqli_fetch_all($resultsos, MYSQLI_ASSOC);
             <h2>Ketua Kampung - <?php echo $username; ?></h2>
             <ul>
                 <li><a href="ketuakampung_dashboard.php"><i class="fa fa-home"></i> Home</a></li>
-                <li><a href="#"><i class="fa fa-edit"></i> Monitor Village Reports - Notify Village</a></li>
-                <li><a href="#"><i class="fa fa-calendar-plus"></i> Announcement for villagers</a></li>
-                <li><a href="#"><i class="fa fa-comments"></i> Communicate with Penghulu</a></li>
-                <li><a href="#"><i class="fa-solid fa-map-location-dot"></i> Incident Map</a></li>
+                <li><a href="ketua_report_list.php"><i class="fa fa-edit"></i> Monitor Village Reports - Notify Village</a></li>
                 <li><a href="../../logout.php"><i class="fa fa-sign-out-alt"></i> Logout</a></li>
             </ul>
         </div>
@@ -243,26 +240,25 @@ $sosList = mysqli_fetch_all($resultsos, MYSQLI_ASSOC);
                     </tr>
 
                     <?php if (count($sosList) > 0): ?>
-                        <?php $i = 1;
-                        foreach ($sosList as $sos): ?>
-                            <tr>
-                                <td><?= $i++ ?></td>
-                                <td><?= htmlspecialchars($sos['villager_name']) ?></td>
-                                <td><b><?= htmlspecialchars($sos['sos_status']) ?></b></td>
-                                <td><?= htmlspecialchars($sos['created_at']) ?></td>
-                                <td>
-                                    <button onclick="resolveSOS(<?= $sos['sos_id'] ?>)">Resolve</button>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
+                                                                                                    <?php $i = 1;
+                                                                                                    foreach ($sosList as $sos): ?>
+                                                                                                                                                                                    <tr>
+                                                                                                                                                                                        <td><?= $i++ ?></td>
+                                                                                                                                                                                        <td><?= htmlspecialchars($sos['villager_name']) ?></td>
+                                                                                                                                                                                        <td><b><?= htmlspecialchars($sos['sos_status']) ?></b></td>
+                                                                                                                                                                                        <td><?= htmlspecialchars($sos['created_at']) ?></td>
+                                                                                                                                                                                        <td>
+                                                                                                                                                                                            <button onclick="resolveSOS(<?= $sos['sos_id'] ?>)">Resolve</button>
+                                                                                                                                                                                        </td>
+                                                                                                                                                                                    </tr>
+                                                                                                    <?php endforeach; ?>
                     <?php else: ?>
-                        <tr>
-                            <td colspan="5">No SOS alerts</td>
-                        </tr>
+                                                                                                    <tr>
+                                                                                                        <td colspan="5">No SOS alerts</td>
+                                                                                                    </tr>
                     <?php endif; ?>
                 </table>
             </div>
-
 
 
             <div class="table-container">
@@ -282,57 +278,59 @@ $sosList = mysqli_fetch_all($resultsos, MYSQLI_ASSOC);
                     </tr>
 
                     <?php if (mysqli_num_rows($result) > 0): ?>
-                        <?php $i = 1;
-                        while ($row = mysqli_fetch_assoc($result)): ?>
-                            <tr>
-                                <td><?= $i++ ?></td>
-                                <td><?= htmlspecialchars($row['report_title']) ?></td>
-                                <td><?= htmlspecialchars($row['report_type']) ?></td>
-                                <td><?= htmlspecialchars($row['report_desc']) ?></td>
-                                <td><?= htmlspecialchars($row['report_date']) ?></td>
-                                <td><?= htmlspecialchars($row['report_location']) ?></td>
-                                <td><?= htmlspecialchars($row['villager_name']) ?></td>
-                                <td class="status-<?= strtolower($row['report_status']) ?>">
-                                    <?= htmlspecialchars($row['report_status']) ?>
-                                </td>
-                                <td>
-                                    <?php if ($row['report_status'] === 'Pending'): ?>
-                                        <button class="btn btn-success"
-                                            onclick="openForm(
+                                                                                                    <?php $i = 1;
+                                                                                                    while ($row = mysqli_fetch_assoc($result)): ?>
+                                                                                                                                                                                    <tr>
+                                                                                                                                                                                        <td><?= $i++ ?></td>
+                                                                                                                                                                                        <td><?= htmlspecialchars($row['report_title']) ?></td>
+                                                                                                                                                                                        <td><?= htmlspecialchars($row['report_type']) ?></td>
+                                                                                                                                                                                        <td><?= htmlspecialchars($row['report_desc']) ?></td>
+                                                                                                                                                                                        <td><?= htmlspecialchars($row['report_date']) ?></td>
+                                                                                                                                                                                        <td><?= htmlspecialchars($row['report_location']) ?></td>
+                                                                                                                                                                                        <td><?= htmlspecialchars($row['villager_name']) ?></td>
+                                                                                                                                                                                        <td class="status-<?= strtolower($row['report_status']) ?>">
+                                                                                                                                                                                            <?= htmlspecialchars($row['report_status']) ?>
+                                                                                                                                                                                        </td>
+                                                                                                                                                                                        <td>
+                                                                                                                                                                                            <?php if ($row['report_status'] === 'Pending'): ?>
+                                                                                                                                                                                                                                                                            <button class="btn btn-success"
+                                                                                                                                                                                                                                                                                onclick="openForm(
                                             <?= $row['report_id'] ?>,
                                             '<?= htmlspecialchars(addslashes($row['report_title'])) ?>',
                                             '<?= htmlspecialchars(addslashes($row['villager_name'])) ?>'
                                         )">
-                                            Approve
-                                        </button>
+                                                                                                                                                                                                                                                                                Approve
+                                                                                                                                                                                                                                                                            </button>
 
-                                        <button class="btn btn-danger"
-                                            onclick="rejectReport(<?= $row['report_id'] ?>)">
-                                            Reject
-                                        </button>
+                                                                                                                                                                                                                                                                            <button class="btn btn-danger"
+                                                                                                                                                                                                                                                                                onclick="rejectReport(<?= $row['report_id'] ?>)">
+                                                                                                                                                                                                                                                                                Reject
+                                                                                                                                                                                                                                                                            </button>
 
-                                        <button class="btn btn-warning"
-                                            onclick="deleteReport(<?= $row['report_id'] ?>)">
-                                            Delete
-                                        </button>
+                                                                                                                                                                                                                                                                            <button class="btn btn-warning"
+                                                                                                                                                                                                                                                                                onclick="deleteReport(<?= $row['report_id'] ?>)">
+                                                                                                                                                                                                                                                                                Delete
+                                                                                                                                                                                                                                                                            </button>
 
-                                    <?php else: ?>
-                                        <button class="btn" disabled>Approve</button>
-                                        <button class="btn" disabled>Reject</button>
-                                        <button class="btn" disabled>Delete</button>
-                                    <?php endif; ?>
-                                </td>
+                                                                                                                                                                                            <?php else: ?>
+                                                                                                                                                                                                                                                                            <button class="btn" disabled>Approve</button>
+                                                                                                                                                                                                                                                                            <button class="btn" disabled>Reject</button>
+                                                                                                                                                                                                                                                                            <button class="btn" disabled>Delete</button>
+                                                                                                                                                                                            <?php endif; ?>
+                                                                                                                                                                                        </td>
 
-                            </tr>
-                        <?php endwhile; ?>
+                                                                                                                                                                                    </tr>
+                                                                                                    <?php endwhile; ?>
                     <?php else: ?>
-                        <tr>
-                            <td colspan="6" style="text-align:center;">No reports submitted yet</td>
-                        </tr>
+                                                                                                    <tr>
+                                                                                                        <td colspan="6" style="text-align:center;">No reports submitted yet</td>
+                                                                                                    </tr>
                     <?php endif; ?>
                 </table>
             </div>
         </div>
+
+
 
 
         <!-- reportform -->
@@ -361,9 +359,9 @@ $sosList = mysqli_fetch_all($resultsos, MYSQLI_ASSOC);
             </form>
 
             <?php if (isset($_GET['success'])): ?>
-                <script>
-                    alert("Report submitted successfully!");
-                </script>
+                                                                                            <script>
+                                                                                                alert("Report submitted successfully!");
+                                                                                            </script>
             <?php endif; ?>
 
         </div>
@@ -468,5 +466,7 @@ $sosList = mysqli_fetch_all($resultsos, MYSQLI_ASSOC);
         document.getElementById("mapModal").style.display = "none";
     }
 </script>
+
+
 
 </html>

@@ -12,7 +12,7 @@ $username = $_SESSION['user_name'];
 
 // Fetch reports for this villager ONLY
 $sql = "
-    SELECT 
+    SELECT
         vr.*,
         u.user_name AS ketua_name
     FROM villager_report vr
@@ -22,7 +22,7 @@ $sql = "
 ";
 
 
-$result = mysqli_query($conn, $sql);
+$result = mysqli_query($db, $sql);
 ?>
 
 <!DOCTYPE html>
@@ -131,43 +131,43 @@ $result = mysqli_query($conn, $sql);
                     </tr>
 
                     <?php if (mysqli_num_rows($result) > 0): ?>
-                        <?php $i = 1;
-                        while ($row = mysqli_fetch_assoc($result)): ?>
-                            <tr>
-                                <td><?= $i++ ?></td>
-                                <td><?= htmlspecialchars($row['report_title']) ?></td>
-                                <td><?= htmlspecialchars($row['report_type']) ?></td>
-                                <td><?= htmlspecialchars($row['report_desc']) ?></td>
-                                <td><?= htmlspecialchars($row['report_date']) ?></td>
-                                <td><?= htmlspecialchars($row['report_location']) ?></td>
-                                <td>
-                                    <button onclick="viewMap(
-                                            '<?= $row['latitude'] ?>', 
+                            <?php $i = 1;
+                            while ($row = mysqli_fetch_assoc($result)): ?>
+                                    <tr>
+                                        <td><?= $i++ ?></td>
+                                        <td><?= htmlspecialchars($row['report_title']) ?></td>
+                                        <td><?= htmlspecialchars($row['report_type']) ?></td>
+                                        <td><?= htmlspecialchars($row['report_desc']) ?></td>
+                                        <td><?= htmlspecialchars($row['report_date']) ?></td>
+                                        <td><?= htmlspecialchars($row['report_location']) ?></td>
+                                        <td>
+                                            <button onclick="viewMap(
+                                            '<?= $row['latitude'] ?>',
                                             '<?= $row['longitude'] ?>'
                                             )">
-                                        📍 View Map
-                                    </button>
-                                </td>
-                                <td><?= htmlspecialchars($row['ketua_name']) ?></td>
-                                <td class="status-<?= strtolower($row['report_status']) ?>">
-                                    <?= htmlspecialchars($row['report_status']) ?>
-                                </td>
-                                <td>
-                                    <button onclick="showFeedback(
+                                                📍 View Map
+                                            </button>
+                                        </td>
+                                        <td><?= htmlspecialchars($row['ketua_name']) ?></td>
+                                        <td class="status-<?= strtolower($row['report_status']) ?>">
+                                            <?= htmlspecialchars($row['report_status']) ?>
+                                        </td>
+                                        <td>
+                                            <button onclick="showFeedback(
                                             '<?= htmlspecialchars(addslashes($row['report_title'])) ?>',
                                             '<?= htmlspecialchars(addslashes($row['report_feedback'])) ?>',
                                             '<?= $row['report_status'] ?>'
                                         )">
-                                        View
-                                    </button>
+                                                View
+                                            </button>
 
-                                </td>
-                            </tr>
-                        <?php endwhile; ?>
+                                        </td>
+                                    </tr>
+                            <?php endwhile; ?>
                     <?php else: ?>
-                        <tr>
-                            <td colspan="6" style="text-align:center;">No reports submitted yet</td>
-                        </tr>
+                            <tr>
+                                <td colspan="6" style="text-align:center;">No reports submitted yet</td>
+                            </tr>
                     <?php endif; ?>
                 </table>
             </div>
