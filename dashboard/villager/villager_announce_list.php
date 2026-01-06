@@ -1,14 +1,14 @@
 <?php
 session_start();
-include '../../dbconnect.php';
+include "../../dbconnect.php";
 
-if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'villager') {
-    header('Location: ../login.php');
+if (!isset($_SESSION["user_id"]) || $_SESSION["user_role"] !== "villager") {
+    header("Location: ../login.php");
     exit();
 }
 
-$villager_id = $_SESSION['user_id'];
-$username = $_SESSION['user_name'];
+$villager_id = $_SESSION["user_id"];
+$username = $_SESSION["user_name"];
 
 function getAnnouncements($db, $type)
 {
@@ -16,18 +16,18 @@ function getAnnouncements($db, $type)
         SELECT
         a.*,
         u.user_name AS published_by
-        FROM ketua_announce a
-        JOIN tbl_users u ON a.ketua_id = u.user_id
+        FROM authority_announce a
+        JOIN tbl_users u ON a.authority_id = u.user_id
         WHERE a.announce_type = '$type'
         ORDER BY a.announce_date ASC
     ";
     return mysqli_query($db, $sql);
 }
 
-$alerts = getAnnouncements($db, 'alert');
-$events = getAnnouncements($db, 'event');
-$infos = getAnnouncements($db, 'info');
-$community = getAnnouncements($db, 'community');
+$alerts = getAnnouncements($db, "alert");
+$events = getAnnouncements($db, "event");
+$infos = getAnnouncements($db, "info");
+$community = getAnnouncements($db, "community");
 
 // Function to get header color based on announcement type
 function renderTable($result)
@@ -51,20 +51,17 @@ function renderTable($result)
     while ($row = mysqli_fetch_assoc($result)) {
         echo "
         <tr>
-            <td>{$row['announce_title']}</td>
-            <td>{$row['announce_desc']}</td>
-            <td>{$row['announce_date']}</td>
-            <td>{$row['announce_location']}</td>
-            <td>{$row['published_by']}</td>
+            <td>{$row["announce_title"]}</td>
+            <td>{$row["announce_desc"]}</td>
+            <td>{$row["announce_date"]}</td>
+            <td>{$row["announce_location"]}</td>
+            <td>{$row["published_by"]}</td>
         </tr>
         ";
     }
 
     echo "</table>";
 }
-
-
-
 ?>
 
 <!DOCTYPE html>
@@ -171,14 +168,11 @@ function renderTable($result)
 
         <!-- Sidebar -->
         <div class="sidebar">
-            <h2>Village - <?php echo $username; ?></h2>
+            <h2>Villager - <?php echo $username; ?></h2>
             <ul>
                 <li><a href="villager_dashboard.php"><i class="fa fa-home"></i> Home</a></li>
-                <li><a href="villager_report_list.php"><i class="fa fa-flag"></i> Submit Report,Emergency / Complaint</a></li>
+                <li><a href="villager_report_list.php"><i class="fa fa-flag"></i> View My Reports</a></li>
                 <li><a href="villager_announce_list.php"><i class="fa fa-bell"></i> Announcement / Alerts</a></li>
-
-                <li><a href="#"><i class="fa-solid fa-triangle-exclamation"></i> SOS</a></li>
-                <li><a href="#"><i class="fa-solid fa-map-location-dot"></i> Incident Map</a></li>
                 <li><a href="../../logout.php"><i class="fa fa-sign-out-alt"></i> Logout</a></li>
             </ul>
         </div>

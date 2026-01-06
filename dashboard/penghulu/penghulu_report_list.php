@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'penghulu') {
 
 $username = $_SESSION['user_name'];
 
-// Fetch reports for this villager ONLY
+// Fetch reports from villagers
 $sql = "
     SELECT
         vr.*,
@@ -99,7 +99,7 @@ $result = mysqli_query($db, $sql);
 
         <!-- Sidebar -->
         <div class="sidebar">
-            <h2>Penghulu - <?php echo $username; ?></h2>
+            <h2>Penghulu</h2>
             <ul>
             <li><a href="penghulu_dashboard.php"><i class="fa fa-home"></i> Home</a></li>
             <li><a href="penghulu_report_list.php"><i class="fa-solid fa-city"></i> Monitor All Villages - Review Issues - Notify Ketua Kampung</a></li>
@@ -113,7 +113,7 @@ $result = mysqli_query($db, $sql);
         <!-- Main -->
         <div class="main">
             <div class="header">
-                <h1>Report List From Villager</h1>
+                <h1>Report List From Villagers</h1>
                 <p>Logged in as: <?= htmlspecialchars($username) ?></p>
             </div>
 
@@ -136,38 +136,38 @@ $result = mysqli_query($db, $sql);
                     </tr>
 
                     <?php if (mysqli_num_rows($result) > 0): ?>
-                                                                                                                                    <?php $i = 1;
-                                                                                                                                    while ($row = mysqli_fetch_assoc($result)): ?>
-                                                                                                                                                                                                                                                    <tr>
-                                                                                                                                                                                                                                                        <td><?= $i++ ?></td>
-                                                                                                                                                                                                                                                        <td><?= htmlspecialchars($row['report_title']) ?></td>
-                                                                                                                                                                                                                                                        <td><?= htmlspecialchars($row['villager_name']) ?></td>
-                                                                                                                                                                                                                                                        <td><?= htmlspecialchars($row['report_type']) ?></td>
-                                                                                                                                                                                                                                                        <td><?= htmlspecialchars($row['report_desc']) ?></td>
-                                                                                                                                                                                                                                                        <td><?= htmlspecialchars($row['report_date']) ?></td>
-                                                                                                                                                                                                                                                        <td><?= htmlspecialchars($row['report_location']) ?></td>
-                                                                                                                                                                                                                                                        <td><?= htmlspecialchars($row['ketua_name']) ?></td>
-                                                                                                                                                                                                                                                        <td class="status-<?= strtolower($row['report_status']) ?>">
-                                                                                                                                                                                                                                                            <?= htmlspecialchars($row['report_status']) ?>
-                                                                                                                                                                                                                                                        </td>
-                                                                                                                                                                                                                                                        <td>
-                                                                                                                                                                                                                                                            <button onclick="showFeedback(
+                                                                                                                                                                <?php $i = 1;
+                                                                                                                                                                while ($row = mysqli_fetch_assoc($result)): ?>
+                                                                                                                                                                                                                                                                                                            <tr>
+                                                                                                                                                                                                                                                                                                                <td><?= $i++ ?></td>
+                                                                                                                                                                                                                                                                                                                <td><?= htmlspecialchars($row['report_title']) ?></td>
+                                                                                                                                                                                                                                                                                                                <td><?= htmlspecialchars($row['villager_name']) ?></td>
+                                                                                                                                                                                                                                                                                                                <td><?= htmlspecialchars($row['report_type']) ?></td>
+                                                                                                                                                                                                                                                                                                                <td><?= htmlspecialchars($row['report_desc']) ?></td>
+                                                                                                                                                                                                                                                                                                                <td><?= htmlspecialchars($row['report_date']) ?></td>
+                                                                                                                                                                                                                                                                                                                <td><?= htmlspecialchars($row['report_location']) ?></td>
+                                                                                                                                                                                                                                                                                                                <td><?= htmlspecialchars($row['ketua_name']) ?></td>
+                                                                                                                                                                                                                                                                                                                <td class="status-<?= strtolower($row['report_status']) ?>">
+                                                                                                                                                                                                                                                                                                                    <?= htmlspecialchars($row['report_status']) ?>
+                                                                                                                                                                                                                                                                                                                </td>
+                                                                                                                                                                                                                                                                                                                <td>
+                                                                                                                                                                                                                                                                                                                    <button onclick="showFeedback(
                                             '<?= htmlspecialchars(addslashes($row['report_title'])) ?>',
                                             '<?= htmlspecialchars(addslashes($row['report_feedback'])) ?>',
                                             '<?= $row['report_status'] ?>'
                                         )">
-                                                                                                                                                                                                                                                                View
-                                                                                                                                                                                                                                                            </button>
+                                                                                                                                                                                                                                                                                                                        View
+                                                                                                                                                                                                                                                                                                                    </button>
 
-                                                                                                                                                                                                                                                        </td>
+                                                                                                                                                                                                                                                                                                                </td>
 
 
-                                                                                                                                                                                                                                                    </tr>
-                                                                                                                                    <?php endwhile; ?>
+                                                                                                                                                                                                                                                                                                            </tr>
+                                                                                                                                                                <?php endwhile; ?>
                     <?php else: ?>
-                                                                                                                                    <tr>
-                                                                                                                                        <td colspan="6" style="text-align:center;">No reports submitted yet</td>
-                                                                                                                                    </tr>
+                                                                                                                                                                <tr>
+                                                                                                                                                                    <td colspan="6" style="text-align:center;">No reports submitted yet</td>
+                                                                                                                                                                </tr>
                     <?php endif; ?>
                 </table>
             </div>

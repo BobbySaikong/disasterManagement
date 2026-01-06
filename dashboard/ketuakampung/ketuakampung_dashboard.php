@@ -1,55 +1,53 @@
 <?php
 session_start();
-include '../../dbconnect.php';
+include "../../dbconnect.php";
 
 //Only 'ketuakampung' role allowed
-if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'ketuakampung') {
-    header('Location: ../login.php');
+if (!isset($_SESSION["user_id"]) || $_SESSION["user_role"] !== "ketuakampung") {
+    header("Location: ../login.php");
     exit();
 }
 // Get ketua info
-$username = $_SESSION['user_name'];
-$role = $_SESSION['user_role'];
+$username = $_SESSION["user_name"];
+$role = $_SESSION["user_role"];
 
 // Fetch count of pending reports
-$ketua_id = $_SESSION['user_id'];
+$ketua_id = $_SESSION["user_id"];
 $sql = "SELECT COUNT(*) AS pending_count FROM villager_report
         WHERE ketua_id = '$ketua_id' AND report_status = 'Pending'";
 $result = mysqli_query($db, $sql);
 $row = mysqli_fetch_assoc($result);
-$pending_count = $row['pending_count'];
+$pending_count = $row["pending_count"];
 
-if (isset($_POST['submitinformation'])) {
-
+if (isset($_POST["submitinformation"])) {
     // Handle announcement publishing here
-    $type = $_POST['announcement_type'];
-    $title = $_POST['announcement_title'];
-    $description = $_POST['announcement_description'];
-    $date = $_POST['announcement_date'];
-    $location = $_POST['announcement_location'];
+    $type = $_POST["announcement_type"];
+    $title = $_POST["announcement_title"];
+    $description = $_POST["announcement_description"];
+    $date = $_POST["announcement_date"];
+    $location = $_POST["announcement_location"];
 
     // Insert into database (example table: announcements)
-    $sqlinsertannouncement = "INSERT INTO `ketua_announce`( `ketua_id`, `announce_title`, `announce_type`, `announce_desc`, `announce_date`, `announce_location`)
+    $sqlinsertannouncement = "INSERT INTO `authority_announce`( `ketua_id`, `announce_title`, `announce_type`, `announce_desc`, `announce_date`, `announce_location`)
     VALUES ('$ketua_id','$title','$type','$description','$date', '$location');";
 
     if (mysqli_query($db, $sqlinsertannouncement)) {
         header("Location: ketuakampung_dashboard.php?success=1");
         exit();
     } else {
-        echo "<script>alert('Error publishing announcement: " . mysqli_error($db) . "');</script>";
+        echo mysqli_error($db);
     }
 }
 
-$sqlPenghulu = "SELECT user_id, user_name FROM tbl_users WHERE user_role = 'penghulu'";
+$sqlPenghulu =
+    "SELECT user_id, user_name FROM tbl_users WHERE user_role = 'penghulu'";
 $resultPenghulu = mysqli_query($db, $sqlPenghulu);
 
-
-if (isset($_POST['submit_to_penghulu'])) {
-
-    $title = $_POST['kp_title'];
-    $desc = $_POST['kp_desc'];
-    $location = $_POST['kp_location'];
-    $penghulu_id = $_POST['penghulu_id'];
+if (isset($_POST["submit_to_penghulu"])) {
+    $title = $_POST["kp_title"];
+    $desc = $_POST["kp_desc"];
+    $location = $_POST["kp_location"];
+    $penghulu_id = $_POST["penghulu_id"];
 
     $sql = "INSERT INTO `ketua_report`(`ketua_id`, `penghulu_id`, `report_title`, `report_desc`, `report_location`, `report_status`)
     VALUES ('$ketua_id','$penghulu_id','$title','$desc','$location','Pending')";
@@ -58,7 +56,9 @@ if (isset($_POST['submit_to_penghulu'])) {
         header("Location: ketuakampung_dashboard.php?success_reportpenghulu=1");
         exit();
     } else {
-        echo "<script>alert('Error submitting report to penghulu: " . mysqli_error($db) . "');</script>";
+        echo "<script>alert('Error submitting report to penghulu: " .
+            mysqli_error($db) .
+            "');</script>";
     }
 }
 
@@ -72,7 +72,7 @@ $report_sql = "SELECT r.latitude, r.longitude, r.report_title, r.report_type, r.
 $report_result = mysqli_query($db, $report_sql);
 $reports = [];
 while ($row = mysqli_fetch_assoc($report_result)) {
-    $row['type'] = 'report';
+    $row["type"] = "report";
     $reports[] = $row;
 }
 
@@ -84,15 +84,13 @@ $sos_sql = "SELECT s.latitude, s.longitude, s.sos_status, u.user_name AS sent_by
 $sos_result = mysqli_query($db, $sos_sql);
 $sos = [];
 while ($row = mysqli_fetch_assoc($sos_result)) {
-    $row['type'] = 'sos';
+    $row["type"] = "sos";
     $sos[] = $row;
 }
 
 // Combine
 $allPins = array_merge($reports, $sos);
 $pinreports_json = json_encode($allPins);
-
-
 ?>
 
 <!DOCTYPE html>
@@ -284,7 +282,7 @@ $pinreports_json = json_encode($allPins);
                 </div>
             </form>
 
-            <?php if (isset($_GET['success'])): ?>
+            <?php if (isset($_GET["success"])): ?>
                                                         <script>
                                                             alert("Information published successfully!");
                                                         </script>
@@ -308,9 +306,19 @@ $pinreports_json = json_encode($allPins);
                 <label>Penghulu</label>
                 <select name="penghulu_id" required>
                     <option value="">Select Penghulu</option>
-                    <?php while ($rowP = mysqli_fetch_assoc($resultPenghulu)): ?>
-                                                                <option value="<?= htmlspecialchars($rowP['user_id']) ?>">
-                                                                    <?= htmlspecialchars($rowP['user_name']) ?>
+                    <?php while (
+                        $rowP = mysqli_fetch_assoc($resultPenghulu)
+                    ): ?>
+                                                                <option value="<?= htmlspecialchars(
+                                                                    $rowP[
+                                                                        "user_id"
+                                                                    ],
+                                                                ) ?>">
+                                                                    <?= htmlspecialchars(
+                                                                        $rowP[
+                                                                            "user_name"
+                                                                        ],
+                                                                    ) ?>
                                                                 </option>
                     <?php endwhile; ?>
                 </select>
@@ -319,7 +327,7 @@ $pinreports_json = json_encode($allPins);
                 <button type="button" class="btn" onclick="closePenghuluForm()">Cancel</button>
             </form>
 
-            <?php if (isset($_GET['success_reportpenghulu'])): ?>
+            <?php if (isset($_GET["success_reportpenghulu"])): ?>
                                                         <script>
                                                             alert("report to penghulu successfully!");
                                                         </script>

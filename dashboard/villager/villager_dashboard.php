@@ -1,32 +1,31 @@
 <?php
 session_start();
-include '../../dbconnect.php';
+include "../../dbconnect.php";
 
-if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'villager') {
-    header('Location: ../login.php');
+if (!isset($_SESSION["user_id"]) || $_SESSION["user_role"] !== "villager") {
+    header("Location: ../login.php");
     exit();
 }
 
-$villager_id = $_SESSION['user_id'];
-$username = $_SESSION['user_name'];
-$role = $_SESSION['user_role'];
+$villager_id = $_SESSION["user_id"];
+$username = $_SESSION["user_name"];
+$role = $_SESSION["user_role"];
 
 $sqlketua = "SELECT * FROM tbl_users WHERE user_role = 'ketuakampung' ";
 $resultketua = mysqli_query($db, $sqlketua);
 
 //insert report to database
-if (isset($_POST['submitreport'])) {
-
-    $title = $_POST['title'];
-    $report_type = $_POST['report_type'];
-    $description = $_POST['description'];
-    $phone = $_POST['phone'];
-    $date = $_POST['date'];
-    $location = $_POST['location'];
-    $ketua_id = $_POST['ketua_kampung'];
-    $status = 'Pending';
-    $lat = $_POST['latitude'];
-    $lng = $_POST['longitude'];
+if (isset($_POST["submitreport"])) {
+    $title = $_POST["title"];
+    $report_type = $_POST["report_type"];
+    $description = $_POST["description"];
+    $phone = $_POST["phone"];
+    $date = $_POST["date"];
+    $location = $_POST["location"];
+    $ketua_id = $_POST["ketua_kampung"];
+    $status = "Pending";
+    $lat = $_POST["latitude"];
+    $lng = $_POST["longitude"];
 
     if (!ctype_digit($phone)) {
         header("Location: villager_dashboard.php?error=phone");
@@ -37,7 +36,6 @@ if (isset($_POST['submitreport'])) {
         exit();
     }
 
-
     $sqlinsertreport = "INSERT INTO `villager_report`(`villager_id`, `ketua_id`,  `report_title`, `report_type`, `report_desc`, `report_phone`,
     `report_date`,  `report_location`, `latitude`, `longitude`, `report_status`)
             VALUES ('$villager_id','$ketua_id', '$title', '$report_type', '$description', '$phone', '$date', '$location', '$lat', '$lng', '$status')";
@@ -46,15 +44,17 @@ if (isset($_POST['submitreport'])) {
         header("Location: villager_dashboard.php?success=1");
         exit();
     } else {
-        echo "<script>alert('Error submitting report: " . mysqli_error($db) . "');</script>";
+        echo "<script>alert('Error submitting report: " .
+            mysqli_error($db) .
+            "');</script>";
     }
 }
 
-if (isset($_POST['sosconfirm'])) {
-    $lat = $_POST['sos_latitude'];
-    $lng = $_POST['sos_longitude'];
+if (isset($_POST["sosconfirm"])) {
+    $lat = $_POST["sos_latitude"];
+    $lng = $_POST["sos_longitude"];
     // Insert SOS logic here
-    $sos_status = 'Sent';
+    $sos_status = "Sent";
     $sos_sql = "INSERT INTO `sos_villager`( `villager_id`, `ketua_id`, `latitude`, `longitude`, `sos_status`)
     VALUES ('$villager_id',' ',$lat,$lng,'$sos_status');";
 
@@ -62,7 +62,9 @@ if (isset($_POST['sosconfirm'])) {
         header("Location: villager_dashboard.php?success_sos=1");
         exit();
     } else {
-        echo "<script>alert('Error sending SOS: " . mysqli_error($db) . "');</script>";
+        echo "<script>alert('Error sending SOS: " .
+            mysqli_error($db) .
+            "');</script>";
     }
 }
 
@@ -75,7 +77,7 @@ $pinreport_sql = "SELECT r.latitude, r.longitude, r.report_title, r.report_type,
 $pinreport_result = mysqli_query($db, $pinreport_sql);
 $pinreports = [];
 while ($row = mysqli_fetch_assoc($pinreport_result)) {
-    $row['type'] = 'report';
+    $row["type"] = "report";
     $pinreports[] = $row;
 }
 
@@ -86,13 +88,12 @@ $sos_sql = "SELECT s.latitude, s.longitude, s.sos_status, u.user_name AS sent_by
 $sos_result = mysqli_query($db, $sos_sql);
 $sos = [];
 while ($row = mysqli_fetch_assoc($sos_result)) {
-    $row['type'] = 'sos';
+    $row["type"] = "sos";
     $sos[] = $row;
 }
 
 $allPins = array_merge($pinreports, $sos);
 $pinreports_json = json_encode($allPins);
-
 ?>
 
 
@@ -205,13 +206,12 @@ $pinreports_json = json_encode($allPins);
     <div class="dashboard">
         <!-- Sidebar / Drawer -->
         <div class="sidebar">
-            <h2>Village </h2>
+            <h2>Villager</h2>
             <ul>
                 <li><a href="villager_dashboard.php"><i class="fa fa-home"></i> Home</a></li>
-                <li><a href="villager_report_list.php"><i class="fa fa-flag"></i> Submit Report,Emergency / Complaint</a></li>
+                <li><a href="villager_report_list.php"><i class="fa fa-flag"></i> View My Reports</a></li>
                 <li><a href="villager_announce_list.php"><i class="fa fa-bell"></i> Announcement / Alerts</a></li>
 
-                <li><a href="#"><i class="fa-solid fa-triangle-exclamation"></i> SOS</a></li>
                 <li>
                     <a href="javascript:void(0)" onclick="openFullMap()">
                         <i class="fa-solid fa-map-location-dot"></i> Incident Map
@@ -226,7 +226,7 @@ $pinreports_json = json_encode($allPins);
         <div class="main">
             <!-- Header -->
             <div class="header">
-                <h1>Welcome, <?php echo $username, $villager_id, $role; ?></h1>
+                <h1>Welcome, <?php echo $username . " !"; ?> </h1>
             </div>
 
             <!-- Dashboard content -->
@@ -313,9 +313,15 @@ $pinreports_json = json_encode($allPins);
                     <select name="ketua_kampung" required>
                         <option value="">Select Ketua Kampung</option>
 
-                        <?php while ($rowketua = mysqli_fetch_assoc($resultketua)): ?>
-                                <option value="<?= htmlspecialchars($rowketua['user_id']) ?>">
-                                    <?= htmlspecialchars($rowketua['user_name']) ?>
+                        <?php while (
+                            $rowketua = mysqli_fetch_assoc($resultketua)
+                        ): ?>
+                                <option value="<?= htmlspecialchars(
+                                    $rowketua["user_id"],
+                                ) ?>">
+                                    <?= htmlspecialchars(
+                                        $rowketua["user_name"],
+                                    ) ?>
                                 </option>
                         <?php endwhile; ?>
 
@@ -325,7 +331,7 @@ $pinreports_json = json_encode($allPins);
                 </div>
             </form>
 
-            <?php if (isset($_GET['success'])): ?>
+            <?php if (isset($_GET["success"])): ?>
                     <script>
                         alert("Report submitted successfully!");
                     </script>
@@ -353,7 +359,7 @@ $pinreports_json = json_encode($allPins);
                 </div>
             </form>
 
-            <?php if (isset($_GET['success_sos'])): ?>
+            <?php if (isset($_GET["success_sos"])): ?>
                     <script>
                         alert("Sos submitted successfully!");
                     </script>

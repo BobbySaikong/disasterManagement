@@ -1,14 +1,14 @@
 <?php
 session_start();
-include '../../dbconnect.php';
+include "../../dbconnect.php";
 
-if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'villager') {
-    header('Location: ../login.php');
+if (!isset($_SESSION["user_id"]) || $_SESSION["user_role"] !== "villager") {
+    header("Location: ../login.php");
     exit();
 }
 
-$villager_id = $_SESSION['user_id'];
-$username = $_SESSION['user_name'];
+$villager_id = $_SESSION["user_id"];
+$username = $_SESSION["user_name"];
 
 // Fetch reports for this villager ONLY
 $sql = "
@@ -20,7 +20,6 @@ $sql = "
     WHERE vr.villager_id = '$villager_id'
     ORDER BY vr.report_date ASC
 ";
-
 
 $result = mysqli_query($db, $sql);
 ?>
@@ -94,14 +93,11 @@ $result = mysqli_query($db, $sql);
 
         <!-- Sidebar -->
         <div class="sidebar">
-            <h2>Village - <?php echo $username; ?></h2>
+            <h2>Villager</h2>
             <ul>
                 <li><a href="villager_dashboard.php"><i class="fa fa-home"></i> Home</a></li>
-                <li><a href="villager_report_list.php"><i class="fa fa-flag"></i> Submit Report,Emergency / Complaint</a></li>
+                <li><a href="villager_report_list.php"><i class="fa fa-flag"></i>View My Reports</a></li>
                 <li><a href="villager_announce_list.php"><i class="fa fa-bell"></i> Announcement / Alerts</a></li>
-
-                <li><a href="#"><i class="fa-solid fa-triangle-exclamation"></i> SOS</a></li>
-                <li><a href="#"><i class="fa-solid fa-map-location-dot"></i> Incident Map</a></li>
                 <li><a href="../../logout.php"><i class="fa fa-sign-out-alt"></i> Logout</a></li>
             </ul>
         </div>
@@ -131,39 +127,65 @@ $result = mysqli_query($db, $sql);
                     </tr>
 
                     <?php if (mysqli_num_rows($result) > 0): ?>
-                            <?php $i = 1;
+                            <?php
+                            $i = 1;
                             while ($row = mysqli_fetch_assoc($result)): ?>
                                     <tr>
                                         <td><?= $i++ ?></td>
-                                        <td><?= htmlspecialchars($row['report_title']) ?></td>
-                                        <td><?= htmlspecialchars($row['report_type']) ?></td>
-                                        <td><?= htmlspecialchars($row['report_desc']) ?></td>
-                                        <td><?= htmlspecialchars($row['report_date']) ?></td>
-                                        <td><?= htmlspecialchars($row['report_location']) ?></td>
+                                        <td><?= htmlspecialchars(
+                                            $row["report_title"],
+                                        ) ?></td>
+                                        <td><?= htmlspecialchars(
+                                            $row["report_type"],
+                                        ) ?></td>
+                                        <td><?= htmlspecialchars(
+                                            $row["report_desc"],
+                                        ) ?></td>
+                                        <td><?= htmlspecialchars(
+                                            $row["report_date"],
+                                        ) ?></td>
+                                        <td><?= htmlspecialchars(
+                                            $row["report_location"],
+                                        ) ?></td>
                                         <td>
                                             <button onclick="viewMap(
-                                            '<?= $row['latitude'] ?>',
-                                            '<?= $row['longitude'] ?>'
+                                            '<?= $row["latitude"] ?>',
+                                            '<?= $row["longitude"] ?>'
                                             )">
                                                 📍 View Map
                                             </button>
                                         </td>
-                                        <td><?= htmlspecialchars($row['ketua_name']) ?></td>
-                                        <td class="status-<?= strtolower($row['report_status']) ?>">
-                                            <?= htmlspecialchars($row['report_status']) ?>
+                                        <td><?= htmlspecialchars(
+                                            $row["ketua_name"],
+                                        ) ?></td>
+                                        <td class="status-<?= strtolower(
+                                            $row["report_status"],
+                                        ) ?>">
+                                            <?= htmlspecialchars(
+                                                $row["report_status"],
+                                            ) ?>
                                         </td>
                                         <td>
                                             <button onclick="showFeedback(
-                                            '<?= htmlspecialchars(addslashes($row['report_title'])) ?>',
-                                            '<?= htmlspecialchars(addslashes($row['report_feedback'])) ?>',
-                                            '<?= $row['report_status'] ?>'
+                                            '<?= htmlspecialchars(
+                                                addslashes(
+                                                    $row["report_title"],
+                                                ),
+                                            ) ?>',
+                                            '<?= htmlspecialchars(
+                                                addslashes(
+                                                    $row["report_feedback"],
+                                                ),
+                                            ) ?>',
+                                            '<?= $row["report_status"] ?>'
                                         )">
                                                 View
                                             </button>
 
                                         </td>
                                     </tr>
-                            <?php endwhile; ?>
+                            <?php endwhile;
+                            ?>
                     <?php else: ?>
                             <tr>
                                 <td colspan="6" style="text-align:center;">No reports submitted yet</td>

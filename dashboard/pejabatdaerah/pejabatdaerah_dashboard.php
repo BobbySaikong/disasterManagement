@@ -1,17 +1,42 @@
 <?php
 session_start();
 
-include '../../dbconnect.php';
+include "../../dbconnect.php";
 
-if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'pejabatdaerah') {
-    header('Location: ../login.php');
+if (
+    !isset($_SESSION["user_id"]) ||
+    $_SESSION["user_role"] !== "pejabatdaerah"
+) {
+    header("Location: ../login.php");
     exit();
 }
 
-$user_id = $_SESSION['user_id'];
-$username = $_SESSION['user_name'];
-$role = $_SESSION['user_role'];
+$pejabatdaerah_id = $_SESSION["user_id"];
 
+//Submit district-level announcement
+if (isset($_POST["submitinformation"])) {
+    // Handle announcement publishing here
+    $type = $_POST["announcement_type"];
+    $title = $_POST["announcement_title"];
+    $description = $_POST["announcement_description"];
+    $date = $_POST["announcement_date"];
+    $location = $_POST["announcement_location"];
+
+    // Insert into database (example table: announcements)
+    $sqlinsertannouncement = "INSERT INTO `authority_announce`( `authority_id`, `announce_title`, `announce_type`, `announce_desc`, `announce_date`, `announce_location`)
+    VALUES ('$pejabatdaerah_id','$title','$type','$description','$date', '$location');";
+
+    if (mysqli_query($db, $sqlinsertannouncement)) {
+        header("Location: pejabatdaerah_dashboard.php?success=1");
+        exit();
+    } else {
+        echo mysqli_error($db);
+    }
+}
+
+$user_id = $_SESSION["user_id"];
+$username = $_SESSION["user_name"];
+$role = $_SESSION["user_role"];
 
 //map
 // penghulu reports
@@ -24,12 +49,11 @@ $report_sql = "SELECT r.latitude, r.longitude, r.report_title, r.report_type, r.
 $report_result = mysqli_query($db, $report_sql);
 $reports = [];
 while ($row = mysqli_fetch_assoc($report_result)) {
-    $row['type'] = 'report';
+    $row["type"] = "report";
     $reports[] = $row;
 }
 
-// SOS alerts
-// change to penghulu reports?
+//Alerts on map
 $sos_sql = "SELECT s.latitude, s.longitude, s.sos_status, u.user_name AS sent_by
             FROM sos_villager s
             JOIN tbl_users u ON s.villager_id = u.user_id
@@ -37,15 +61,13 @@ $sos_sql = "SELECT s.latitude, s.longitude, s.sos_status, u.user_name AS sent_by
 $sos_result = mysqli_query($db, $sos_sql);
 $sos = [];
 while ($row = mysqli_fetch_assoc($sos_result)) {
-    $row['type'] = 'sos';
+    $row["type"] = "sos";
     $sos[] = $row;
 }
-
 
 // Combine
 $allPins = array_merge($reports, $sos);
 $pinreports_json = json_encode($allPins);
-
 ?>
 
 <!DOCTYPE html>
@@ -64,6 +86,80 @@ $pinreports_json = json_encode($allPins);
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
 
+<style>
+.btn-with-badge {
+    position: relative;
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #1e40af;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.btn-with-badge .badge {
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+#disastercommandform {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.notificationformpejabatdaerah {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.notificationformpejabatdaerah h2 {
+    text-align: center;
+    margin: 0 auto;
+}
+
+.notificationformpejabatdaerah label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.notificationformpejabatdaerah input,
+.notificationformpejabatdaerah select,
+.notificationformpejabatdaerah textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+
+}
+
+.notificationformpejabatdaerah .btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+
+}
+</style>
+
 <body>
   <div class="dashboard">
 
@@ -72,9 +168,7 @@ $pinreports_json = json_encode($allPins);
       <h2>Pejabat Daerah</h2>
       <ul>
         <li><a href="pejabatdaerah_dashboard.php"><i class="fa fa-home"></i> Home</a></li>
-        <!--todo penghulu report list-->
         <li><a href="pejabatdaerah_report_list.php"><i class="fa-solid fa-city"></i> Monitor All Villages</a></li>
-        <!--make file just like village report list-->
         <li><a href="pejabatdaerah_penghulu_report_list.php"><i class="fa-solid fa-file-lines"></i> Reports From Penghulu </a></li>
         <li><a href="../../logout.php"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
       </ul>
@@ -85,7 +179,7 @@ $pinreports_json = json_encode($allPins);
 
       <!-- Header -->
       <div class="header">
-        <h1>Welcome, <?php echo $username; ?></h1>
+        <h1>Welcome, <?php echo $username; ?> !</h1>
         <p>Digital Village Management Dashboard (DVMD)</p>
       </div>
 
@@ -119,7 +213,7 @@ $pinreports_json = json_encode($allPins);
         <div class="card critical">
           <h3> Disaster Commands</h3>
           <p>Issue district-level emergency commands , Send notifications to all villages and officials.</p>
-          <a href= "#"><button class="danger-btn">Issue Command</button></a>
+          <a><button class="danger-btn" onclick="openForm()">Issue Command</button></a>
         </div>
 
 
@@ -153,10 +247,61 @@ $pinreports_json = json_encode($allPins);
       </div>
   </div>
 
+  <div id="disastercommandform">
+      <form method="POST" action="" class="notificationformpejabatdaerah">
+
+          <div class="form-card">
+              <span class="close" onclick="closeForm()">&times;</span>
+              <h2>Issue Commands</h2>
+
+              <label>Type</label>
+              <select name="announcement_type" required>
+                  <option value="">Select Announcement Type</option>
+                  <option value="event">Event</option>
+                  <option value="alert">Alert</option>
+                  <option value="info">Information</option>
+                  <option value="community">Community</option>
+              </select>
+
+              <label>Title</label>
+              <input type="text" name="announcement_title" required>
+
+              <label>Description</label>
+              <textarea name="announcement_description" required></textarea>
+
+              <label>Date</label>
+              <input type="date" name="announcement_date" required>
+
+              <label>Location</label>
+              <input type="text" name="announcement_location" placeholder="GPS / Address">
+
+              <button class="btn" name="submitinformation">Confirm Publish</button>
+          </div>
+      </form>
+
+      <?php if (isset($_GET["success"])): ?>
+                                                  <script>
+                                                      alert("Command issued successfully!");
+                                                  </script>
+      <?php endif; ?>
+
+  </div>
+
 </body>
 
 <!-- Map Script -->
     <script>
+      var disastercommandform = document.getElementById("disastercommandform");
+
+      function openForm() {
+          disastercommandform.style.display = "flex";
+      }
+
+      function closeForm() {
+          disastercommandform.style.display = "none";
+      }
+
+
         var greenIcon = L.icon({
             iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
             shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',

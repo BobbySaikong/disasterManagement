@@ -224,7 +224,7 @@ $pinreports_json = json_encode($allPins);
 
             <!-- Header -->
             <div class="header">
-                <h1>Welcome,<?php echo $username, $penghulu_id, $role; ?></h1>
+                <h1>Welcome, <?php echo $username ?> !</h1>
                 <p>Digital Village Management Dashboard (DVMD)</p>
             </div>
 
@@ -283,9 +283,9 @@ $pinreports_json = json_encode($allPins);
                 <select name="pejabatdaerah_id" required>
                     <option value="">Select Pejabat Daerah</option>
                     <?php while ($rowP = mysqli_fetch_assoc($resultPejabatdaerah)): ?>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        <option value="<?= htmlspecialchars($rowP['user_id']) ?>">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                            <?= htmlspecialchars($rowP['user_name']) ?>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        </option>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <option value="<?= htmlspecialchars($rowP['user_id']) ?>">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <?= htmlspecialchars($rowP['user_name']) ?>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </option>
                     <?php endwhile; ?>
                 </select>
 
@@ -294,9 +294,9 @@ $pinreports_json = json_encode($allPins);
             </form>
 
             <?php if (isset($_GET['success_reportpejabatdaerah'])): ?>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                <script>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    alert("report to Pejabat Daerah successfully!");
-                                                                                                                                                                                                                                                                                                                                                                                                                                               </script>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <script>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            alert("report to Pejabat Daerah successfully!");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       </script>
             <?php endif; ?>
 
 
