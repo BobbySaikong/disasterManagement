@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 04, 2026 at 03:28 PM
+-- Generation Time: Jan 06, 2026 at 12:34 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -24,12 +24,12 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `ketua_announce`
+-- Table structure for table `authority_announce`
 --
 
-CREATE TABLE `ketua_announce` (
+CREATE TABLE `authority_announce` (
   `announce_id` int(11) NOT NULL,
-  `ketua_id` int(11) NOT NULL,
+  `authority_id` int(11) NOT NULL,
   `announce_title` varchar(50) NOT NULL,
   `announce_type` enum('alert','info','community','event') NOT NULL,
   `announce_desc` varchar(100) NOT NULL,
@@ -39,17 +39,18 @@ CREATE TABLE `ketua_announce` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `ketua_announce`
+-- Dumping data for table `authority_announce`
 --
 
-INSERT INTO `ketua_announce` (`announce_id`, `ketua_id`, `announce_title`, `announce_type`, `announce_desc`, `announce_date`, `announce_location`, `created_date`) VALUES
+INSERT INTO `authority_announce` (`announce_id`, `authority_id`, `announce_title`, `announce_type`, `announce_desc`, `announce_date`, `announce_location`, `created_date`) VALUES
 (1, 2, 'test by ketua', 'event', 'tesyysysys', '2025-12-18', 'kampung fuvking l=lima', '2025-12-17 16:22:10'),
 (2, 2, 'test by ketua', 'event', 'tesyysysys', '2025-12-18', 'kampung fuvking l=lima', '2025-12-17 16:23:31'),
 (3, 6, 'alert by ahmad', 'alert', 'asasa', '2025-12-18', 'kampung fuvking l=lima', '2025-12-17 16:24:08'),
 (4, 6, 'll', 'event', 'll', '2025-12-18', 'kampung fuvking l=lima', '2025-12-17 16:44:01'),
 (5, 6, 'banjir', 'info', 'aaaa', '2025-12-18', 'kampung fuvking l=lima', '2025-12-17 16:44:18'),
 (6, 2, 'assa', 'community', 'fg', '2025-12-18', 'kampung fuvking l=lima', '2025-12-17 16:46:26'),
-(7, 2, 'banjir', 'alert', '1131', '2025-12-19', '', '2025-12-17 16:46:36');
+(7, 2, 'banjir', 'alert', '1131', '2025-12-19', '', '2025-12-17 16:46:36'),
+(8, 4, 'dsfdsf', 'alert', 'sdfsdfs', '2026-02-06', 'fsdfdsf', '2026-01-06 10:08:19');
 
 -- --------------------------------------------------------
 
@@ -67,6 +68,7 @@ CREATE TABLE `ketua_report` (
   `report_latitude` decimal(10,8) NOT NULL,
   `report_longitude` decimal(11,8) NOT NULL,
   `report_status` varchar(200) NOT NULL,
+  `report_feedback` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -74,11 +76,14 @@ CREATE TABLE `ketua_report` (
 -- Dumping data for table `ketua_report`
 --
 
-INSERT INTO `ketua_report` (`kt_report_id`, `ketua_id`, `penghulu_id`, `report_title`, `report_desc`, `report_location`, `report_latitude`, `report_longitude`, `report_status`, `created_at`) VALUES
-(1, 2, 3, 'report to penghulu', 'test1', 'jalan fucking 5', 0.00000000, 0.00000000, 'Pending', '2025-12-26 11:30:46'),
-(2, 2, 3, 'report to penghulu', 'test1', 'jalan fucking 5', 0.00000000, 0.00000000, 'Pending', '2025-12-26 11:30:49'),
-(3, 2, 3, 'report to penghulu', 'test2', 'jalan fucking 5', 0.00000000, 0.00000000, 'Pending', '2025-12-26 11:33:23'),
-(4, 2, 3, 'Pusat lebihan', 'kapasiti penuh', 'Gua Musang', 0.00000000, 0.00000000, 'Pending', '2026-01-03 19:03:13');
+INSERT INTO `ketua_report` (`kt_report_id`, `ketua_id`, `penghulu_id`, `report_title`, `report_desc`, `report_location`, `report_latitude`, `report_longitude`, `report_status`, `report_feedback`, `created_at`) VALUES
+(2, 2, 3, 'report to penghulu', 'test1', 'jalan fucking 5', 0.00000000, 0.00000000, 'Approved', 'okay', '2025-12-26 11:30:49'),
+(3, 2, 3, 'report to penghulu', 'test2', 'jalan fucking 5', 0.00000000, 0.00000000, 'Approved', 'okay', '2025-12-26 11:33:23'),
+(4, 2, 3, 'Pusat lebihan', 'kapasiti penuh', 'Gua Musang', 0.00000000, 0.00000000, 'Approved', 'boek', '2026-01-03 19:03:13'),
+(6, 2, 3, 'Reject my report', 'pls reject', 'Baling', 0.00000000, 0.00000000, 'Rejected', 'Report rejected by penghulu ( Penghulu )', '2026-01-05 08:24:19'),
+(7, 2, 3, 'please rejct', 'pls', 'test reject', 0.00000000, 0.00000000, 'Rejected', 'Report rejected by penghulu ( Penghulu )', '2026-01-05 08:35:02'),
+(10, 2, 3, 'Reject my report', 'rej', 'report', 0.00000000, 0.00000000, 'Rejected', 'Report rejected by penghulu ( Penghulu )', '2026-01-05 08:40:49'),
+(11, 2, 3, 'Delete my report', 'dfsdfdsf', 'sdfsdf', 0.00000000, 0.00000000, 'Approved', 'sffsfdf', '2026-01-05 16:55:38');
 
 -- --------------------------------------------------------
 
@@ -109,6 +114,7 @@ CREATE TABLE `pejabatdaerah_report` (
   `report_latitude` decimal(10,8) NOT NULL,
   `report_longitude` decimal(11,8) NOT NULL,
   `report_status` varchar(200) NOT NULL,
+  `report_feedback` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -126,6 +132,7 @@ CREATE TABLE `penghulu_report` (
   `report_desc` text NOT NULL,
   `report_location` varchar(200) NOT NULL,
   `report_status` varchar(200) NOT NULL,
+  `report_feedback` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -133,8 +140,16 @@ CREATE TABLE `penghulu_report` (
 -- Dumping data for table `penghulu_report`
 --
 
-INSERT INTO `penghulu_report` (`penghulu_report_id`, `penghulu_id`, `pejabat_daerah_id`, `report_title`, `report_desc`, `report_location`, `report_status`, `created_at`) VALUES
-(1, 3, 4, 'pusat pemindahanan sementara', 'kapasiti penuh', 'Gua Musang', 'Pending', '2026-01-04 13:36:12');
+INSERT INTO `penghulu_report` (`penghulu_report_id`, `penghulu_id`, `pejabat_daerah_id`, `report_title`, `report_desc`, `report_location`, `report_status`, `report_feedback`, `created_at`) VALUES
+(1, 3, 4, 'pusat pemindahanan sementara', 'kapasiti penuh', 'Gua Musang', 'Approved', '', '2026-01-05 07:20:02'),
+(2, 3, 4, 'Bantuan makanan', 'Perlukan bantuan  makanan', 'Kuala Krai', 'Approved', 'letsgo', '2026-01-05 08:10:05'),
+(3, 3, 4, 'paras air naik', 'melimpah ke dalam pusat', 'Machang', 'Approved', 'pemindahan pusat baru', '2026-01-05 08:17:55'),
+(4, 3, 4, 'PLEASE DELETE REPORT', 'silap', 'Sik', 'Approved', 'wokay\r\n', '2026-01-05 16:30:19'),
+(6, 3, 4, 'pusat pemindahanan sementara', 'delete my report', 'del', 'Rejected', 'Report rejected by  (Penghulu)', '2026-01-05 17:29:52'),
+(7, 3, 4, 'PLEASE DELETE REPORT', 'test', 'de', 'Rejected', 'Report rejected by  (Penghulu)', '2026-01-05 17:29:49'),
+(10, 3, 4, 'pusat pemindahanan sementara', 'test', 'del', 'Approved', 'baik', '2026-01-05 17:27:44'),
+(22, 3, 4, 'scsc', 'dvdsv', 'Gua Musang', 'Approved', 'ok', '2026-01-05 17:23:16'),
+(23, 3, 4, 'vsdvdsvdsv', 'sdvsdvs', 'vsdvsdv', 'Approved', 'ok', '2026-01-05 17:21:48');
 
 -- --------------------------------------------------------
 
@@ -192,7 +207,9 @@ INSERT INTO `tbl_users` (`user_id`, `user_name`, `user_email`, `user_password`, 
 (4, 'pejabat', 'pejabat@gmail.com', '8cb2237d0679ca88db6464eac60da96345513964', 'pejabatdaerah', '2025-12-16 09:08:58'),
 (5, 'poji', 'poji@gmail.com', '8cb2237d0679ca88db6464eac60da96345513964', 'villager', '2025-12-16 14:43:57'),
 (6, 'ahmad', 'ahmad@gmail.com', '8cb2237d0679ca88db6464eac60da96345513964', 'ketuakampung', '2025-12-16 15:27:03'),
-(7, 'bobbywong', 'bobby@gmail.com', '7c4a8d09ca3762af61e59520943dc26494f8941b', 'ketuakampung', '2025-12-29 01:52:35');
+(7, 'bobbywong', 'bobby@gmail.com', '7c4a8d09ca3762af61e59520943dc26494f8941b', 'ketuakampung', '2025-12-29 01:52:35'),
+(8, 'megat', 'megat@gmail.com', '8cb2237d0679ca88db6464eac60da96345513964', 'villager', '2026-01-04 15:13:44'),
+(9, 'bobby', 'warisan6660@gmail.com', '8cb2237d0679ca88db6464eac60da96345513964', 'villager', '2026-01-06 06:27:52');
 
 -- --------------------------------------------------------
 
@@ -240,9 +257,9 @@ INSERT INTO `villager_report` (`report_id`, `villager_id`, `ketua_id`, `report_t
 --
 
 --
--- Indexes for table `ketua_announce`
+-- Indexes for table `authority_announce`
 --
-ALTER TABLE `ketua_announce`
+ALTER TABLE `authority_announce`
   ADD PRIMARY KEY (`announce_id`);
 
 --
@@ -292,16 +309,16 @@ ALTER TABLE `villager_report`
 --
 
 --
--- AUTO_INCREMENT for table `ketua_announce`
+-- AUTO_INCREMENT for table `authority_announce`
 --
-ALTER TABLE `ketua_announce`
-  MODIFY `announce_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+ALTER TABLE `authority_announce`
+  MODIFY `announce_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `ketua_report`
 --
 ALTER TABLE `ketua_report`
-  MODIFY `kt_report_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `kt_report_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `kplb_alerts`
@@ -319,7 +336,7 @@ ALTER TABLE `pejabatdaerah_report`
 -- AUTO_INCREMENT for table `penghulu_report`
 --
 ALTER TABLE `penghulu_report`
-  MODIFY `penghulu_report_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `penghulu_report_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `sos_villager`
@@ -331,7 +348,7 @@ ALTER TABLE `sos_villager`
 -- AUTO_INCREMENT for table `tbl_users`
 --
 ALTER TABLE `tbl_users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `villager_report`
