@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 06, 2026 at 12:34 PM
+-- Generation Time: Jan 06, 2026 at 09:55 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -98,6 +98,32 @@ CREATE TABLE `kplb_alerts` (
   `alert_description` text NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pejabatdaerah_aid_distribution`
+--
+
+CREATE TABLE `pejabatdaerah_aid_distribution` (
+  `aid_distribution_id` int(11) NOT NULL,
+  `pejabatdaerah_id` int(11) NOT NULL,
+  `aid_type` varchar(255) NOT NULL,
+  `penghulu_id` int(11) NOT NULL,
+  `distribution_title` varchar(255) NOT NULL,
+  `distribution_desc` varchar(255) NOT NULL,
+  `distribution_date` date NOT NULL,
+  `distribution_location` varchar(255) NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `pejabatdaerah_aid_distribution`
+--
+
+INSERT INTO `pejabatdaerah_aid_distribution` (`aid_distribution_id`, `pejabatdaerah_id`, `aid_type`, `penghulu_id`, `distribution_title`, `distribution_desc`, `distribution_date`, `distribution_location`, `created_at`) VALUES
+(1, 0, '', 0, '', '', '0000-00-00', '', '2026-01-07 04:48:54'),
+(2, 4, 'transportation', 3, 'Transportation to home', 'otw', '2026-01-07', 'Changloon', '2026-01-07 04:54:22');
 
 -- --------------------------------------------------------
 
@@ -275,6 +301,12 @@ ALTER TABLE `kplb_alerts`
   ADD PRIMARY KEY (`alerts_id`);
 
 --
+-- Indexes for table `pejabatdaerah_aid_distribution`
+--
+ALTER TABLE `pejabatdaerah_aid_distribution`
+  ADD PRIMARY KEY (`aid_distribution_id`);
+
+--
 -- Indexes for table `pejabatdaerah_report`
 --
 ALTER TABLE `pejabatdaerah_report`
@@ -327,6 +359,12 @@ ALTER TABLE `kplb_alerts`
   MODIFY `alerts_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `pejabatdaerah_aid_distribution`
+--
+ALTER TABLE `pejabatdaerah_aid_distribution`
+  MODIFY `aid_distribution_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `pejabatdaerah_report`
 --
 ALTER TABLE `pejabatdaerah_report`
@@ -336,7 +374,7 @@ ALTER TABLE `pejabatdaerah_report`
 -- AUTO_INCREMENT for table `penghulu_report`
 --
 ALTER TABLE `penghulu_report`
-  MODIFY `penghulu_report_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `penghulu_report_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `sos_villager`

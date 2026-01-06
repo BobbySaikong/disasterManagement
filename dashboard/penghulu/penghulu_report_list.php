@@ -1,14 +1,13 @@
 <?php
 session_start();
-include '../../dbconnect.php';
+include "../../dbconnect.php";
 
-if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'penghulu') {
-    header('Location: ../login.php');
+if (!isset($_SESSION["user_id"]) || $_SESSION["user_role"] !== "penghulu") {
+    header("Location: ../login.php");
     exit();
 }
 
-
-$username = $_SESSION['user_name'];
+$username = $_SESSION["user_name"];
 
 // Fetch reports from villagers
 $sql = "
@@ -21,7 +20,6 @@ $sql = "
     JOIN tbl_users k ON vr.ketua_id = k.user_id
     ORDER BY vr.report_date ASC
 ";
-
 
 $result = mysqli_query($db, $sql);
 ?>
@@ -102,7 +100,7 @@ $result = mysqli_query($db, $sql);
             <h2>Penghulu</h2>
             <ul>
             <li><a href="penghulu_dashboard.php"><i class="fa fa-home"></i> Home</a></li>
-            <li><a href="penghulu_report_list.php"><i class="fa-solid fa-city"></i> Monitor All Villages - Review Issues - Notify Ketua Kampung</a></li>
+            <li><a href="penghulu_report_list.php"><i class="fa-solid fa-city"></i> Monitor Villages Status</a></li>
             <li><a href="penghulu_ketua_report_list.php"><i class="fa-solid fa-file-lines"></i> Reports from Ketua Kampung</a></li>
 
 
@@ -136,25 +134,74 @@ $result = mysqli_query($db, $sql);
                     </tr>
 
                     <?php if (mysqli_num_rows($result) > 0): ?>
-                                                                                                                                                                <?php $i = 1;
-                                                                                                                                                                while ($row = mysqli_fetch_assoc($result)): ?>
+                                                                                                                                                                <?php
+                                                                                                                                                                $i = 1;
+                                                                                                                                                                while (
+                                                                                                                                                                    $row = mysqli_fetch_assoc(
+                                                                                                                                                                        $result,
+                                                                                                                                                                    )
+                                                                                                                                                                ): ?>
                                                                                                                                                                                                                                                                                                             <tr>
                                                                                                                                                                                                                                                                                                                 <td><?= $i++ ?></td>
-                                                                                                                                                                                                                                                                                                                <td><?= htmlspecialchars($row['report_title']) ?></td>
-                                                                                                                                                                                                                                                                                                                <td><?= htmlspecialchars($row['villager_name']) ?></td>
-                                                                                                                                                                                                                                                                                                                <td><?= htmlspecialchars($row['report_type']) ?></td>
-                                                                                                                                                                                                                                                                                                                <td><?= htmlspecialchars($row['report_desc']) ?></td>
-                                                                                                                                                                                                                                                                                                                <td><?= htmlspecialchars($row['report_date']) ?></td>
-                                                                                                                                                                                                                                                                                                                <td><?= htmlspecialchars($row['report_location']) ?></td>
-                                                                                                                                                                                                                                                                                                                <td><?= htmlspecialchars($row['ketua_name']) ?></td>
-                                                                                                                                                                                                                                                                                                                <td class="status-<?= strtolower($row['report_status']) ?>">
-                                                                                                                                                                                                                                                                                                                    <?= htmlspecialchars($row['report_status']) ?>
+                                                                                                                                                                                                                                                                                                                <td><?= htmlspecialchars(
+                                                                                                                                                                                                                                                                                                                    $row[
+                                                                                                                                                                                                                                                                                                                        "report_title"
+                                                                                                                                                                                                                                                                                                                    ],
+                                                                                                                                                                                                                                                                                                                ) ?></td>
+                                                                                                                                                                                                                                                                                                                <td><?= htmlspecialchars(
+                                                                                                                                                                                                                                                                                                                    $row[
+                                                                                                                                                                                                                                                                                                                        "villager_name"
+                                                                                                                                                                                                                                                                                                                    ],
+                                                                                                                                                                                                                                                                                                                ) ?></td>
+                                                                                                                                                                                                                                                                                                                <td><?= htmlspecialchars(
+                                                                                                                                                                                                                                                                                                                    $row[
+                                                                                                                                                                                                                                                                                                                        "report_type"
+                                                                                                                                                                                                                                                                                                                    ],
+                                                                                                                                                                                                                                                                                                                ) ?></td>
+                                                                                                                                                                                                                                                                                                                <td><?= htmlspecialchars(
+                                                                                                                                                                                                                                                                                                                    $row[
+                                                                                                                                                                                                                                                                                                                        "report_desc"
+                                                                                                                                                                                                                                                                                                                    ],
+                                                                                                                                                                                                                                                                                                                ) ?></td>
+                                                                                                                                                                                                                                                                                                                <td><?= htmlspecialchars(
+                                                                                                                                                                                                                                                                                                                    $row[
+                                                                                                                                                                                                                                                                                                                        "report_date"
+                                                                                                                                                                                                                                                                                                                    ],
+                                                                                                                                                                                                                                                                                                                ) ?></td>
+                                                                                                                                                                                                                                                                                                                <td><?= htmlspecialchars(
+                                                                                                                                                                                                                                                                                                                    $row[
+                                                                                                                                                                                                                                                                                                                        "report_location"
+                                                                                                                                                                                                                                                                                                                    ],
+                                                                                                                                                                                                                                                                                                                ) ?></td>
+                                                                                                                                                                                                                                                                                                                <td><?= htmlspecialchars(
+                                                                                                                                                                                                                                                                                                                    $row[
+                                                                                                                                                                                                                                                                                                                        "ketua_name"
+                                                                                                                                                                                                                                                                                                                    ],
+                                                                                                                                                                                                                                                                                                                ) ?></td>
+                                                                                                                                                                                                                                                                                                                <td class="status-<?= strtolower(
+                                                                                                                                                                                                                                                                                                                    $row[
+                                                                                                                                                                                                                                                                                                                        "report_status"
+                                                                                                                                                                                                                                                                                                                    ],
+                                                                                                                                                                                                                                                                                                                ) ?>">
+                                                                                                                                                                                                                                                                                                                    <?= htmlspecialchars(
+                                                                                                                                                                                                                                                                                                                        $row[
+                                                                                                                                                                                                                                                                                                                            "report_status"
+                                                                                                                                                                                                                                                                                                                        ],
+                                                                                                                                                                                                                                                                                                                    ) ?>
                                                                                                                                                                                                                                                                                                                 </td>
                                                                                                                                                                                                                                                                                                                 <td>
                                                                                                                                                                                                                                                                                                                     <button onclick="showFeedback(
-                                            '<?= htmlspecialchars(addslashes($row['report_title'])) ?>',
-                                            '<?= htmlspecialchars(addslashes($row['report_feedback'])) ?>',
-                                            '<?= $row['report_status'] ?>'
+                                            '<?= htmlspecialchars(
+                                                addslashes(
+                                                    $row["report_title"],
+                                                ),
+                                            ) ?>',
+                                            '<?= htmlspecialchars(
+                                                addslashes(
+                                                    $row["report_feedback"],
+                                                ),
+                                            ) ?>',
+                                            '<?= $row["report_status"] ?>'
                                         )">
                                                                                                                                                                                                                                                                                                                         View
                                                                                                                                                                                                                                                                                                                     </button>
@@ -163,7 +210,8 @@ $result = mysqli_query($db, $sql);
 
 
                                                                                                                                                                                                                                                                                                             </tr>
-                                                                                                                                                                <?php endwhile; ?>
+                                                                                                                                                                <?php endwhile;
+                                                                                                                                                                ?>
                     <?php else: ?>
                                                                                                                                                                 <tr>
                                                                                                                                                                     <td colspan="6" style="text-align:center;">No reports submitted yet</td>

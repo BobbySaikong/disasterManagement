@@ -199,7 +199,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <h2>Penghulu</h2>
             <ul>
                 <li><a href="penghulu_dashboard.php"><i class="fa fa-home"></i> Home</a></li>
-                <li><a href="penghulu_report_list.php"><i class="fa-solid fa-city"></i> Monitor All Villages - Review Issues - Notify Ketua Kampung</a></li>
+                <li><a href="penghulu_report_list.php"><i class="fa-solid fa-city"></i> Monitor Villages Status</a></li>
                 <li><a href="penghulu_ketua_report_list.php"><i class="fa-solid fa-file-lines"></i> Reports from Ketua Kampung</a></li>
                 <li><a href="../../logout.php"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
             </ul>

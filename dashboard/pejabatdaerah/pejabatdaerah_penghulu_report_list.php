@@ -301,6 +301,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                                                                                                                                                                                                                                                                                                                                                 </button>
 
                                                                                                                                                                                                                                                                                                                                                                 <button class="btn btn-warning"
+                                                                                                                                                                                                                                                                                                                                                                    value="deleted"
                                                                                                                                                                                                                                                                                                                                                                     onclick="deleteReport(<?= $row[
                                                                                                                                                                                                                                                                                                                                                                         "penghulu_report_id"
                                                                                                                                                                                                                                                                                                                                                                     ] ?>)">
@@ -335,7 +336,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                                                                                                         alert("Approved successfully!");
                                                                                                                     </script>
         <?php endif; ?>
-        <?php if (isset($_GET["deleted"])): ?>
+        <?php if (isset($_POST["delete"])): ?>
                                                                                                                     <script>
                                                                                                                         alert("Deleted successfully!");
                                                                                                                     </script>
@@ -363,7 +364,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     <textarea type="text" name="feedback" rows="4" required></textarea>
 
 
-                    <button class="btn" name="submitreport">Submit Feedback</button>
+                    <button class="btn" name="submitreport" >Submit Feedback</button>
                 </div>
             </form>
 

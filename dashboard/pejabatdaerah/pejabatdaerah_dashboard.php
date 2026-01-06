@@ -34,6 +34,35 @@ if (isset($_POST["submitinformation"])) {
     }
 }
 
+$sqlPenghulu =
+    "SELECT user_id, user_name FROM tbl_users WHERE user_role = 'penghulu'";
+$resultPenghulu = mysqli_query($db, $sqlPenghulu);
+
+//initiate aid to penghulu
+if (isset($_POST["initiateaid"])) {
+    $penghulu_info = mysqli_fetch_assoc($resultPenghulu);
+    $penghulu_id = $penghulu_info["user_id"];
+    // Handle announcement publishing here
+    $type = $_POST["aid_type"];
+
+    $title = $_POST["aid_title"];
+    $description = $_POST["aid_description"];
+    $date = $_POST["aid_date"];
+    $location = $_POST["aid_location"];
+
+    // Insert into database
+    $sqlaiddistribution = "INSERT INTO `pejabatdaerah_aid_distribution`
+        (`pejabatdaerah_id`, `aid_type`, `penghulu_id` , `distribution_title`, `distribution_desc`, `distribution_date`, `distribution_location`)
+        VALUES ('$pejabatdaerah_id','$type', '$penghulu_id', '$title', '$description', '$date','$location')";
+
+    if (mysqli_query($db, $sqlaiddistribution)) {
+        header("Location: pejabatdaerah_dashboard.php?initiateaid_success=1");
+        exit();
+    } else {
+        echo mysqli_error($db);
+    }
+}
+
 $user_id = $_SESSION["user_id"];
 $username = $_SESSION["user_name"];
 $role = $_SESSION["user_role"];
@@ -156,7 +185,56 @@ $pinreports_json = json_encode($allPins);
     border: none;
     border-radius: 4px;
     cursor: pointer;
+}
 
+#aiddistributionform {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.aiddistributionform {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.aiddistributionform h2 {
+    text-align: center;
+    margin: 0 auto;
+}
+
+.aiddistributionform label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.aiddistributionform input,
+.aiddistributionform select,
+.aiddistributionform textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+
+}
+
+.aiddistributionform .btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
 }
 </style>
 
@@ -197,7 +275,7 @@ $pinreports_json = json_encode($allPins);
         <div class="card">
           <h3>Aid Distribution Management</h3>
           <p>Initiate and track aid distribution to affected areas.</p>
-          <a href = "#"><button>Manage Aid</button></a>
+          <a onclick = "openaiddistributionForm()"><button>Manage Aid</button></a>
         </div>
 
 
@@ -256,8 +334,8 @@ $pinreports_json = json_encode($allPins);
 
               <label>Type</label>
               <select name="announcement_type" required>
-                  <option value="">Select Announcement Type</option>
-                  <option value="event">Event</option>
+                  <option value="">Select Command Type</option>
+                  <option value="event">Evacuate</option>
                   <option value="alert">Alert</option>
                   <option value="info">Information</option>
                   <option value="community">Community</option>
@@ -287,11 +365,73 @@ $pinreports_json = json_encode($allPins);
 
   </div>
 
+  <div id="aiddistributionform" style="display:none;">
+      <form method="POST" action="" class="aiddistributionform">
+
+          <div class="form-card">
+              <span class="close" onclick="closeaiddistributionForm()">&times;</span>
+              <h2>Initiate Aid Distribution</h2>
+
+              <label>Aid Type</label>
+              <select name="aid_type" required>
+                  <option value="">Select Aid Type</option>
+                  <option value="transportation">Transportation</option>
+                  <option value="water">Water</option>
+                  <option value="necessity">Necessity</option>
+                  <option value="clothes">clothes</option>
+              </select>
+              <label>Penghulu</label>
+              <select name="penghulu_id" required>
+                  <option value="">Select Penghulu</option>
+                  <?php while (
+                      $rowPenghulu = mysqli_fetch_assoc($resultPenghulu)
+                  ): ?>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              <option value="<?= htmlspecialchars(
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  $rowPenghulu[
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      "user_id"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ],
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ) ?>">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  <?= htmlspecialchars(
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      $rowPenghulu[
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          "user_name"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ],
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ) ?>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              </option>
+                  <?php endwhile; ?>
+              </select>
+
+
+              <label>Title</label>
+              <input type="text" name="aid_title" required>
+
+              <label>Description</label>
+              <textarea name="aid_description" required></textarea>
+
+              <label>Date</label>
+              <input type="date" name="aid_date" required>
+
+              <label>Location</label>
+              <input type="text" name="aid_location" placeholder="GPS / Address">
+
+              <button class="btn" name="initiateaid">Confirm Publish</button>
+          </div>
+      </form>
+
+      <?php if (isset($_GET["initiateaid_success"])): ?>
+                                                  <script>
+                                                      alert("Aid Command Issued Successfully!");
+                                                  </script>
+      <?php endif; ?>
+
+  </div>
+
 </body>
 
 <!-- Map Script -->
     <script>
       var disastercommandform = document.getElementById("disastercommandform");
+      var aiddistributionform = document.getElementById("aiddistributionform");
+
 
       function openForm() {
           disastercommandform.style.display = "flex";
@@ -299,6 +439,14 @@ $pinreports_json = json_encode($allPins);
 
       function closeForm() {
           disastercommandform.style.display = "none";
+      }
+
+      function openaiddistributionForm() {
+          aiddistributionform.style.display = "flex";
+      }
+
+      function closeaiddistributionForm() {
+          aiddistributionform.style.display = "none";
       }
 
 

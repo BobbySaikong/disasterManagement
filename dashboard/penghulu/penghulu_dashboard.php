@@ -1,15 +1,15 @@
 <?php
 session_start();
-include '../../dbconnect.php';
+include "../../dbconnect.php";
 
-if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'penghulu') {
-    header('Location: ../login.php');
+if (!isset($_SESSION["user_id"]) || $_SESSION["user_role"] !== "penghulu") {
+    header("Location: ../login.php");
     exit();
 }
 
-$penghulu_id = $_SESSION['user_id'];
-$username = $_SESSION['user_name'];
-$role = $_SESSION['user_role'];
+$penghulu_id = $_SESSION["user_id"];
+$username = $_SESSION["user_name"];
+$role = $_SESSION["user_role"];
 
 // Fetch count of pending reports
 // $ketua_id = $_SESSION['user_id'];
@@ -18,7 +18,6 @@ $role = $_SESSION['user_role'];
 // $result = mysqli_query($db, $sql);
 // $row = mysqli_fetch_assoc($result);
 // $pending_count = $row['pending_count'];
-
 
 // //submit announcement
 // if (isset($_POST['submitinformation'])) {
@@ -42,32 +41,45 @@ $role = $_SESSION['user_role'];
 //     }
 // }
 
-
-$sqlPejabatdaerah = "SELECT user_id, user_name FROM tbl_users WHERE user_role = 'pejabatdaerah'";
+$sqlPejabatdaerah =
+    "SELECT user_id, user_name FROM tbl_users WHERE user_role = 'pejabatdaerah'";
 $resultPejabatdaerah = mysqli_query($db, $sqlPejabatdaerah);
 
-
 //submit report to pejabatdaerah
-if (isset($_POST['submit_to_pejabatdaerah'])) {
-
-    $title = $_POST['pd_title'];
-    $desc = $_POST['pd_desc'];
-    $location = $_POST['pd_location'];
-    $pejabatdaerah_id = $_POST['pejabatdaerah_id'];
-    $db_table = 'penghulu_report';
-    $status = 'Pending';
-
+if (isset($_POST["submit_to_pejabatdaerah"])) {
+    $title = $_POST["pd_title"];
+    $desc = $_POST["pd_desc"];
+    $location = $_POST["pd_location"];
+    $pejabatdaerah_id = $_POST["pejabatdaerah_id"];
+    $db_table = "penghulu_report";
+    $status = "Pending";
 
     // $sql = "INSERT INTO $db_table (penghulu_id, pejabat_daerah, report_title, report_desc, report_location, report_status) VALUES (?,?,?,?,?,?)";
     // $stmt = $db->prepare($sql);
     // $stmt->bind_param("iissss", $penghulu_id, $pejabatdaerah_id, $title, $desc, $location, $status);
     // $stmt->execute();
 
-    if ($db->execute_query("INSERT INTO penghulu_report (penghulu_id , pejabat_daerah_id , report_title , report_desc , report_location , report_status) VALUES (?,?,?,?,?,?)", [$penghulu_id, $pejabatdaerah_id, $title, $desc, $location, $status])) {
-        header("Location: penghulu_dashboard.php?success_reportpejabatdaerah=1");
-        exit;
+    if (
+        $db->execute_query(
+            "INSERT INTO penghulu_report (penghulu_id , pejabat_daerah_id , report_title , report_desc , report_location , report_status) VALUES (?,?,?,?,?,?)",
+            [
+                $penghulu_id,
+                $pejabatdaerah_id,
+                $title,
+                $desc,
+                $location,
+                $status,
+            ],
+        )
+    ) {
+        header(
+            "Location: penghulu_dashboard.php?success_reportpejabatdaerah=1",
+        );
+        exit();
     } else {
-        echo "<script>alert('Error publishing announcement: " . mysqli_error($db) . "');</script>";
+        echo "<script>alert('Error publishing announcement: " .
+            mysqli_error($db) .
+            "');</script>";
     }
 
     // $prepared_penghulu_report = mysqli_prepare($db_name, "INSERT INTO $db_table (penghulu_id,p) VALUES (")
@@ -93,7 +105,7 @@ $report_sql = "SELECT r.latitude, r.longitude, r.report_title, r.report_type, r.
 $report_result = mysqli_query($db, $report_sql);
 $reports = [];
 while ($row = mysqli_fetch_assoc($report_result)) {
-    $row['type'] = 'report';
+    $row["type"] = "report";
     $reports[] = $row;
 }
 
@@ -105,7 +117,7 @@ $sos_sql = "SELECT s.latitude, s.longitude, s.sos_status, u.user_name AS sent_by
 $sos_result = mysqli_query($db, $sos_sql);
 $sos = [];
 while ($row = mysqli_fetch_assoc($sos_result)) {
-    $row['type'] = 'sos';
+    $row["type"] = "sos";
     $sos[] = $row;
 }
 
@@ -153,7 +165,7 @@ $pinreports_json = json_encode($allPins);
         font-size: 12px;
     }
 
-    #reportform {
+    #notificationformpenghulu {
         display: none;
         position: fixed;
         top: 0;
@@ -213,7 +225,7 @@ $pinreports_json = json_encode($allPins);
             <h2>Penghulu</h2>
             <ul>
                 <li><a href="penghulu_dashboard.php"><i class="fa fa-home"></i> Home</a></li>
-                <li><a href="penghulu_report_list.php"><i class="fa-solid fa-city"></i> Monitor All Villages - Review Issues - Notify Ketua Kampung</a></li>
+                <li><a href="penghulu_report_list.php"><i class="fa-solid fa-city"></i> Monitor Villages Status</a></li>
                 <li><a href="penghulu_ketua_report_list.php"><i class="fa-solid fa-file-lines"></i> Reports from Ketua Kampung</a></li>
                 <li><a href="../../logout.php"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
             </ul>
@@ -224,7 +236,7 @@ $pinreports_json = json_encode($allPins);
 
             <!-- Header -->
             <div class="header">
-                <h1>Welcome, <?php echo $username ?> !</h1>
+                <h1>Welcome, <?php echo $username; ?> !</h1>
                 <p>Digital Village Management Dashboard (DVMD)</p>
             </div>
 
@@ -236,7 +248,7 @@ $pinreports_json = json_encode($allPins);
 
                 <!-- Monitor villages -->
                 <div class="card">
-                    <h3>Monitor Village Status</h3>
+                    <h3>Monitor Villages Status</h3>
                     <p>Track safety, emergencies, and village conditions, .</p>
                     <a href="penghulu_report_list.php"><button>Monitor Villages</button></a>
                 </div>
@@ -266,8 +278,12 @@ $pinreports_json = json_encode($allPins);
 
         </div>
 
-        <div id="pejabatdaerahform" style="display:none;" class="notificationformpenghulu">
-            <form method="POST">
+        <div id="notificationformpenghulu" style="display:none;" >
+            <form method="POST" action="" class="notificationformpenghulu">
+
+
+                <div class="form-card">
+                    <span class="close" onclick="closePejabatdaerahForm()">&times;</span>
                 <h2>Report to Pejabat Daerah</h2>
 
                 <label>Report Title</label>
@@ -282,9 +298,19 @@ $pinreports_json = json_encode($allPins);
                 <label>Penghulu</label>
                 <select name="pejabatdaerah_id" required>
                     <option value="">Select Pejabat Daerah</option>
-                    <?php while ($rowP = mysqli_fetch_assoc($resultPejabatdaerah)): ?>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <option value="<?= htmlspecialchars($rowP['user_id']) ?>">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <?= htmlspecialchars($rowP['user_name']) ?>
+                    <?php while (
+                        $rowP = mysqli_fetch_assoc($resultPejabatdaerah)
+                    ): ?>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <option value="<?= htmlspecialchars(
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    $rowP[
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        "user_id"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ],
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ) ?>">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <?= htmlspecialchars(
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        $rowP[
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            "user_name"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ],
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ) ?>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 </option>
                     <?php endwhile; ?>
                 </select>
@@ -293,7 +319,7 @@ $pinreports_json = json_encode($allPins);
                 <button type="button" class="btn" onclick="closePejabatdaerahForm()">Cancel</button>
             </form>
 
-            <?php if (isset($_GET['success_reportpejabatdaerah'])): ?>
+            <?php if (isset($_GET["success_reportpejabatdaerah"])): ?>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         <script>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             alert("report to Pejabat Daerah successfully!");
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </script>
@@ -325,23 +351,14 @@ $pinreports_json = json_encode($allPins);
 
 
 <script>
-    var reportform = document.getElementById("reportform");
-
-    function openForm() {
-        reportform.style.display = "flex";
-    }
-
-    function closeForm() {
-        reportform.style.display = "none";
-    }
-
+    var notificationformpenghulu = document.getElementById("notificationformpenghulu");
 
     function openPejabatdaerahForm() {
-        document.getElementById("pejabatdaerahform").style.display = "block";
+      notificationformpenghulu.style.display = "flex";
     }
 
     function closePejabatdaerahForm() {
-        document.getElementById("pejabatdaerahform").style.display = "none";
+      notificationformpenghulu.style.display = "none";
     }
 
     // Map functionality

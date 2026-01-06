@@ -16,9 +16,8 @@ $sql = "
     DELETE FROM penghulu_report
     WHERE penghulu_report_id = '$report_id'
 ";
-
 mysqli_query($db, $sql);
 
-header("Location: pejabatdaerah_penghulu_report_list.php?deleted=1");
+header("Location: pejabatdaerah_penghulu_report_list.php");
 
 exit();
