@@ -276,10 +276,6 @@ $pinreports_json = json_encode($allPins);
             <h2>Pejabat Daerah</h2>
             <ul>
                 <li><a href="pejabatdaerah_dashboard.php"><i class="fa fa-home"></i> Home</a></li>
-                <li><a href="pejabatdaerah_report_list.php"><i class="fa-solid fa-city"></i> Monitor All Villages</a>
-                </li>
-                <li><a href="pejabatdaerah_penghulu_report_list.php"><i class="fa-solid fa-file-lines"></i> Reports From
-                        Penghulu </a></li>
                 <li><a href="../../logout.php"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
             </ul>
         </aside>
@@ -315,38 +311,38 @@ $pinreports_json = json_encode($allPins);
                         </tr>
 
                         <?php if (mysqli_num_rows($villagerreportresult) > 0): ?>
-                                            <?php $i = 1;
-                                            while ($row = mysqli_fetch_assoc($villagerreportresult)): ?>
-                                                                <tr>
-                                                                    <td><?= $i++ ?></td>
-                                                                    <td><?= htmlspecialchars($row['report_title']) ?></td>
-                                                                    <td><?= htmlspecialchars($row['villager_name']) ?></td>
-                                                                    <td><?= htmlspecialchars($row['report_type']) ?></td>
-                                                                    <td><?= htmlspecialchars($row['report_desc']) ?></td>
-                                                                    <td><?= htmlspecialchars($row['report_date']) ?></td>
-                                                                    <td><?= htmlspecialchars($row['report_location']) ?></td>
-                                                                    <td><?= htmlspecialchars($row['ketua_name']) ?></td>
-                                                                    <td class="status-<?= strtolower($row['report_status']) ?>">
-                                                                        <?= htmlspecialchars($row['report_status']) ?>
-                                                                    </td>
-                                                                    <td>
-                                                                        <button onclick="showFeedback(
+                                                <?php $i = 1;
+                                                while ($row = mysqli_fetch_assoc($villagerreportresult)): ?>
+                                                                        <tr>
+                                                                            <td><?= $i++ ?></td>
+                                                                            <td><?= htmlspecialchars($row['report_title']) ?></td>
+                                                                            <td><?= htmlspecialchars($row['villager_name']) ?></td>
+                                                                            <td><?= htmlspecialchars($row['report_type']) ?></td>
+                                                                            <td><?= htmlspecialchars($row['report_desc']) ?></td>
+                                                                            <td><?= htmlspecialchars($row['report_date']) ?></td>
+                                                                            <td><?= htmlspecialchars($row['report_location']) ?></td>
+                                                                            <td><?= htmlspecialchars($row['ketua_name']) ?></td>
+                                                                            <td class="status-<?= strtolower($row['report_status']) ?>">
+                                                                                <?= htmlspecialchars($row['report_status']) ?>
+                                                                            </td>
+                                                                            <td>
+                                                                                <button onclick="showFeedback(
                                         '<?= htmlspecialchars(addslashes($row['report_title'])) ?>',
                                         '<?= htmlspecialchars(addslashes($row['report_feedback'])) ?>',
                                         '<?= $row['report_status'] ?>'
                                     )">
-                                                                            View
-                                                                        </button>
+                                                                                    View
+                                                                                </button>
 
-                                                                    </td>
+                                                                            </td>
 
 
-                                                                </tr>
-                                            <?php endwhile; ?>
+                                                                        </tr>
+                                                <?php endwhile; ?>
                         <?php else: ?>
-                                            <tr>
-                                                <td colspan="6" style="text-align:center;">No reports submitted yet</td>
-                                            </tr>
+                                                <tr>
+                                                    <td colspan="6" style="text-align:center;">No reports submitted yet</td>
+                                                </tr>
                         <?php endif; ?>
                     </table>
 
@@ -370,81 +366,81 @@ $pinreports_json = json_encode($allPins);
 
 
                             <?php if (mysqli_num_rows($ketuareportresult) > 0): ?>
-                                                <?php
-                                                $i = 1;
-                                                while (
-                                                    $row = mysqli_fetch_assoc(
-                                                        $ketuareportresult,
-                                                    )
-                                                ): ?>
-                                                                    <tr>
-                                                                        <td><?= $i++ ?></td>
-                                                                        <td><?= htmlspecialchars(
-                                                                            $row[
-                                                                                "ketua_name"
-                                                                            ],
-                                                                        ) ?>
-                                                                        </td>
-                                                                        <td><?= htmlspecialchars(
-                                                                            $row[
-                                                                                "report_title"
-                                                                            ],
-                                                                        ) ?>
-                                                                        </td>
-                                                                        <td><?= htmlspecialchars(
-                                                                            $row[
-                                                                                "report_desc"
-                                                                            ],
-                                                                        ) ?>
-                                                                        </td>
-                                                                        <td><?= htmlspecialchars(
-                                                                            $row[
-                                                                                "report_location"
-                                                                            ],
-                                                                        ) ?>
-                                                                        </td>
-                                                                        <td
-                                                                            class="status-<?= strtolower(
-                                                                                $row[
-                                                                                    "report_status"
-                                                                                ],
-                                                                            ) ?>">
-                                                                            <?= htmlspecialchars(
-                                                                                $row[
-                                                                                    "report_status"
-                                                                                ],
-                                                                            ) ?>
-                                                                        </td>
-                                                                        <td><?= htmlspecialchars(
-                                                                            $row[
-                                                                                "report_feedback"
-                                                                            ],
-                                                                        ) ?>
-                                                                        </td>
-                                                                        <td><?= htmlspecialchars(
-                                                                            $row[
-                                                                                "created_at"
-                                                                            ],
-                                                                        ) ?>
-                                                                        </td>
-                                                                        <td>
-                                                                            <?php if (
-                                                                                $row[
-                                                                                    "report_status"
-                                                                                ] ===
-                                                                                "Pending"
-                                                                            ): ?>
+                                                    <?php
+                                                    $i = 1;
+                                                    while (
+                                                        $row = mysqli_fetch_assoc(
+                                                            $ketuareportresult,
+                                                        )
+                                                    ): ?>
+                                                                            <tr>
+                                                                                <td><?= $i++ ?></td>
+                                                                                <td><?= htmlspecialchars(
+                                                                                    $row[
+                                                                                        "ketua_name"
+                                                                                    ],
+                                                                                ) ?>
+                                                                                </td>
+                                                                                <td><?= htmlspecialchars(
+                                                                                    $row[
+                                                                                        "report_title"
+                                                                                    ],
+                                                                                ) ?>
+                                                                                </td>
+                                                                                <td><?= htmlspecialchars(
+                                                                                    $row[
+                                                                                        "report_desc"
+                                                                                    ],
+                                                                                ) ?>
+                                                                                </td>
+                                                                                <td><?= htmlspecialchars(
+                                                                                    $row[
+                                                                                        "report_location"
+                                                                                    ],
+                                                                                ) ?>
+                                                                                </td>
+                                                                                <td
+                                                                                    class="status-<?= strtolower(
+                                                                                        $row[
+                                                                                            "report_status"
+                                                                                        ],
+                                                                                    ) ?>">
+                                                                                    <?= htmlspecialchars(
+                                                                                        $row[
+                                                                                            "report_status"
+                                                                                        ],
+                                                                                    ) ?>
+                                                                                </td>
+                                                                                <td><?= htmlspecialchars(
+                                                                                    $row[
+                                                                                        "report_feedback"
+                                                                                    ],
+                                                                                ) ?>
+                                                                                </td>
+                                                                                <td><?= htmlspecialchars(
+                                                                                    $row[
+                                                                                        "created_at"
+                                                                                    ],
+                                                                                ) ?>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <?php if (
+                                                                                        $row[
+                                                                                            "report_status"
+                                                                                        ] ===
+                                                                                        "Pending"
+                                                                                    ): ?>
 
-                                                                            <?php endif; ?>
-                                                                        </td>
+                                                                                    <?php endif; ?>
+                                                                                </td>
 
-                                                                    </tr>
-                                                <?php endwhile;
-                                                ?>
+                                                                            </tr>
+                                                    <?php endwhile;
+                                                    ?>
                             <?php else: ?>
-                                                <tr>
-                                                    <td colspan="6" style="text-align:center;">No reports submitted yet</td>
-                                                </tr>
+                                                    <tr>
+                                                        <td colspan="6" style="text-align:center;">No reports submitted yet</td>
+                                                    </tr>
                             <?php endif; ?>
                         </table>
             </section>
@@ -467,71 +463,71 @@ $pinreports_json = json_encode($allPins);
 
 
                                 <?php if (mysqli_num_rows($penghulureportresult) > 0): ?>
-                                                    <?php
-                                                    $i = 1;
-                                                    while (
-                                                        $row = mysqli_fetch_assoc(
-                                                            $penghulureportresult,
-                                                        )
-                                                    ): ?>
-                                                                        <tr>
-                                                                            <td><?= $i++ ?></td>
-                                                                            <td><?= htmlspecialchars(
-                                                                                $row[
-                                                                                    "penghulu_name"
-                                                                                ],
-                                                                            ) ?>
-                                                                            </td>
-                                                                            <td><?= htmlspecialchars(
-                                                                                $row[
-                                                                                    "report_title"
-                                                                                ],
-                                                                            ) ?>
-                                                                            </td>
-                                                                            <td><?= htmlspecialchars(
-                                                                                $row[
-                                                                                    "report_desc"
-                                                                                ],
-                                                                            ) ?>
-                                                                            </td>
-                                                                            <td><?= htmlspecialchars(
-                                                                                $row[
-                                                                                    "report_location"
-                                                                                ],
-                                                                            ) ?>
-                                                                            </td>
-                                                                            <td
-                                                                                class="status-<?= strtolower(
-                                                                                    $row[
-                                                                                        "report_status"
-                                                                                    ],
-                                                                                ) ?>">
-                                                                                <?= htmlspecialchars(
-                                                                                    $row[
-                                                                                        "report_status"
-                                                                                    ],
-                                                                                ) ?>
-                                                                            </td>
-                                                                            <td><?= htmlspecialchars(
-                                                                                $row[
-                                                                                    "report_feedback"
-                                                                                ],
-                                                                            ) ?>
-                                                                            </td>
-                                                                            <td><?= htmlspecialchars(
-                                                                                $row[
-                                                                                    "created_at"
-                                                                                ],
-                                                                            ) ?>
-                                                                            </td>
-                                                                            <td>
-                                                                                <?php if (
-                                                                                    $row[
-                                                                                        "report_status"
-                                                                                    ] ===
-                                                                                    "Pending"
-                                                                                ): ?>
-                                                                                                    <button class="btn btn-success" onclick="openForm(
+                                                        <?php
+                                                        $i = 1;
+                                                        while (
+                                                            $row = mysqli_fetch_assoc(
+                                                                $penghulureportresult,
+                                                            )
+                                                        ): ?>
+                                                                                <tr>
+                                                                                    <td><?= $i++ ?></td>
+                                                                                    <td><?= htmlspecialchars(
+                                                                                        $row[
+                                                                                            "penghulu_name"
+                                                                                        ],
+                                                                                    ) ?>
+                                                                                    </td>
+                                                                                    <td><?= htmlspecialchars(
+                                                                                        $row[
+                                                                                            "report_title"
+                                                                                        ],
+                                                                                    ) ?>
+                                                                                    </td>
+                                                                                    <td><?= htmlspecialchars(
+                                                                                        $row[
+                                                                                            "report_desc"
+                                                                                        ],
+                                                                                    ) ?>
+                                                                                    </td>
+                                                                                    <td><?= htmlspecialchars(
+                                                                                        $row[
+                                                                                            "report_location"
+                                                                                        ],
+                                                                                    ) ?>
+                                                                                    </td>
+                                                                                    <td
+                                                                                        class="status-<?= strtolower(
+                                                                                            $row[
+                                                                                                "report_status"
+                                                                                            ],
+                                                                                        ) ?>">
+                                                                                        <?= htmlspecialchars(
+                                                                                            $row[
+                                                                                                "report_status"
+                                                                                            ],
+                                                                                        ) ?>
+                                                                                    </td>
+                                                                                    <td><?= htmlspecialchars(
+                                                                                        $row[
+                                                                                            "report_feedback"
+                                                                                        ],
+                                                                                    ) ?>
+                                                                                    </td>
+                                                                                    <td><?= htmlspecialchars(
+                                                                                        $row[
+                                                                                            "created_at"
+                                                                                        ],
+                                                                                    ) ?>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <?php if (
+                                                                                            $row[
+                                                                                                "report_status"
+                                                                                            ] ===
+                                                                                            "Pending"
+                                                                                        ): ?>
+                                                                                                                <button class="btn btn-success" onclick="openForm(
                                                 <?= $row["penghulu_report_id"] ?>,
                                                 '<?= htmlspecialchars(
                                                     addslashes(
@@ -544,37 +540,37 @@ $pinreports_json = json_encode($allPins);
                                                     ),
                                                 ) ?>'
                                             )">
-                                                                                                        Approve
-                                                                                                    </button>
+                                                                                                                    Approve
+                                                                                                                </button>
 
-                                                                                                    <button class="btn btn-danger"
-                                                                                                        onclick="rejectReport(<?= $row[
-                                                                                                            "penghulu_report_id"
-                                                                                                        ] ?>)">
-                                                                                                        Reject
-                                                                                                    </button>
+                                                                                                                <button class="btn btn-danger"
+                                                                                                                    onclick="rejectReport(<?= $row[
+                                                                                                                        "penghulu_report_id"
+                                                                                                                    ] ?>)">
+                                                                                                                    Reject
+                                                                                                                </button>
 
-                                                                                                    <button class="btn btn-warning" value="deleted"
-                                                                                                        onclick="deleteReport(<?= $row[
-                                                                                                            "penghulu_report_id"
-                                                                                                        ] ?>)">
-                                                                                                        Delete
-                                                                                                    </button>
+                                                                                                                <button class="btn btn-warning" value="deleted"
+                                                                                                                    onclick="deleteReport(<?= $row[
+                                                                                                                        "penghulu_report_id"
+                                                                                                                    ] ?>)">
+                                                                                                                    Delete
+                                                                                                                </button>
 
-                                                                                <?php else: ?>
-                                                                                                    <button class="btn" disabled>Approve</button>
-                                                                                                    <button class="btn" disabled>Reject</button>
-                                                                                                    <button class="btn" disabled>Delete</button>
-                                                                                <?php endif; ?>
-                                                                            </td>
+                                                                                        <?php else: ?>
+                                                                                                                <button class="btn" disabled>Approve</button>
+                                                                                                                <button class="btn" disabled>Reject</button>
+                                                                                                                <button class="btn" disabled>Delete</button>
+                                                                                        <?php endif; ?>
+                                                                                    </td>
 
-                                                                        </tr>
-                                                    <?php endwhile;
-                                                    ?>
+                                                                                </tr>
+                                                        <?php endwhile;
+                                                        ?>
                                 <?php else: ?>
-                                                    <tr>
-                                                        <td colspan="6" style="text-align:center;">No reports submitted yet</td>
-                                                    </tr>
+                                                        <tr>
+                                                            <td colspan="6" style="text-align:center;">No reports submitted yet</td>
+                                                        </tr>
                                 <?php endif; ?>
                             </table>
             </section>
