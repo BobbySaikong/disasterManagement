@@ -12,54 +12,78 @@ if (
 }
 
 $pejabatdaerah_id = $_SESSION["user_id"];
+$penghulu_role = "penghulu";
 
-//Submit district-level announcement
-if (isset($_POST["submitinformation"])) {
-    // Handle announcement publishing here
-    $type = $_POST["announcement_type"];
-    $title = $_POST["announcement_title"];
-    $description = $_POST["announcement_description"];
-    $date = $_POST["announcement_date"];
-    $location = $_POST["announcement_location"];
+//todo; change to preparestatement
 
-    // Insert into database (example table: announcements)
-    $sqlinsertannouncement = "INSERT INTO `authority_announce`( `authority_id`, `announce_title`, `announce_type`, `announce_desc`, `announce_date`, `announce_location`)
-    VALUES ('$pejabatdaerah_id','$title','$type','$description','$date', '$location');";
+$stmt = $conn->prepare(
+    "SELECT user_id, user_name FROM tbl_users WHERE user_role = ? ",
+);
+$stmt->bind_param("s", $penghulu_role);
+$stmt->execute();
+$result = $stmt->get_result();
+$dataPenghulu = $result->fetch_all(MYSQLI_ASSOC);
 
-    if (mysqli_query($db, $sqlinsertannouncement)) {
-        header("Location: pejabatdaerah_dashboard.php?success=1");
-        exit();
-    } else {
-        echo mysqli_error($db);
-    }
-}
-
-$sqlPenghulu =
-    "SELECT user_id, user_name FROM tbl_users WHERE user_role = 'penghulu'";
-$resultPenghulu = mysqli_query($db, $sqlPenghulu);
-
-//initiate aid to penghulu
+//initiate aid distribution, send to penghulu
 if (isset($_POST["initiateaid"])) {
-    $penghulu_info = mysqli_fetch_assoc($resultPenghulu);
-    $penghulu_id = $_POST["user_id"];
-
-    // Handle announcement publishing here
+    //aid distribution POST form data
+    $penghulu_id = $_POST["penghulu_id"];
     $type = $_POST["aid_type"];
     $title = $_POST["aid_title"];
     $description = $_POST["aid_description"];
     $date = $_POST["aid_date"];
     $location = $_POST["aid_location"];
 
-    // Insert into database
-    $sqlaiddistribution = "INSERT INTO `pejabatdaerah_aid_distribution`
-        (`pejabatdaerah_id`, `aid_type`, `penghulu_id` , `distribution_title`, `distribution_desc`, `distribution_date`, `distribution_location`)
-        VALUES ('$pejabatdaerah_id','$type', '$penghulu_id', '$title', '$description', '$date','$location')";
+    //pattern of characters to check
+    $pattern = "/^[a-zA-Z0-9 ,.-]{3,100}$/";
 
-    if (mysqli_query($db, $sqlaiddistribution)) {
-        header("Location: pejabatdaerah_dashboard.php?initiateaid_success=1");
-        exit();
-    } else {
-        echo mysqli_error($db);
+    // Check specific inputs
+    $inputs = [
+        "Title" => $title,
+        "Description" => $description,
+        "location" => $location,
+    ];
+
+    //if any of text inputs is invalid, error popup displayed
+    $validation_error = false;
+    foreach ($inputs as $name => $value) {
+        if (!preg_match($pattern, $value)) {
+            $status = "error";
+            $message = "$name format is invalid. Only letters, numbers, spaces, commas, dots, and dashes allowed.";
+            $validation_error = true;
+            break;
+        }
+    }
+
+    // Only proceed query if validation passed.
+    if (!$validation_error) {
+        $stmt = $conn->prepare(
+            "INSERT INTO `pejabatdaerah_aid_distribution`
+        (`pejabatdaerah_id`, `aid_type`, `penghulu_id` , `distribution_title`, `distribution_desc`, `distribution_date`, `distribution_location`)
+        VALUES (?,?,?,?,?,?,?);",
+        );
+        $stmt->bind_param(
+            "isissss",
+            $pejabatdaerah_id,
+            $type,
+            $penghulu_id,
+            $title,
+            $description,
+            $date,
+            $location,
+        );
+
+        if ($stmt->execute()) {
+            // Success: Redirect to clear POST data and show success message
+            header(
+                "Location: pejabatdaerah_dashboard.php?initiateaid_success=1",
+            );
+            exit();
+        } else {
+            // DB Error
+            $status = "error";
+            $message = "Error submitting report: " . mysqli_error($conn);
+        }
     }
 }
 
@@ -75,7 +99,7 @@ $report_sql = "SELECT r.latitude, r.longitude, r.report_title, r.report_type, r.
                 JOIN tbl_users u ON
                 r.villager_id = u.user_id
                 WHERE r.report_status = 'Pending'";
-$report_result = mysqli_query($db, $report_sql);
+$report_result = mysqli_query($conn, $report_sql);
 $reports = [];
 while ($row = mysqli_fetch_assoc($report_result)) {
     $row["type"] = "report";
@@ -87,7 +111,7 @@ $sos_sql = "SELECT s.latitude, s.longitude, s.sos_status, u.user_name AS sent_by
             FROM sos_villager s
             JOIN tbl_users u ON s.villager_id = u.user_id
             WHERE s.sos_status = 'Sent'";
-$sos_result = mysqli_query($db, $sos_sql);
+$sos_result = mysqli_query($conn, $sos_sql);
 $sos = [];
 while ($row = mysqli_fetch_assoc($sos_result)) {
     $row["type"] = "sos";
@@ -236,6 +260,72 @@ $pinreports_json = json_encode($allPins);
     border-radius: 4px;
     cursor: pointer;
 }
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.modal-box {
+    background: #fff;
+    padding: 25px 30px;
+    border-radius: 10px;
+    text-align: center;
+    width: 320px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    animation: popIn 0.3s ease;
+}
+
+.modal-box.success {
+    border-top: 6px solid #28a745;
+}
+
+.modal-box.error {
+    border-top: 6px solid #dc3545;
+}
+
+.modal-icon {
+    font-size: 45px;
+    margin-bottom: 10px;
+}
+
+.modal-box.success .modal-icon {
+    color: #28a745;
+}
+
+.modal-box.error .modal-icon {
+    color: #dc3545;
+}
+
+.modal-box p {
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.modal-box button {
+    padding: 8px 25px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: #333;
+    color: white;
+}
+
+@keyframes popIn {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
 </style>
 
 <body>
@@ -285,13 +375,6 @@ $pinreports_json = json_encode($allPins);
           <p>communicate with Penghulu and Review reports received from Penghulu.</p>
           <!--create pejabatdaerah-penghulu report list-->
           <a href= "pejabatdaerah_penghulu_report_list.php"><button>View Reports</button></a>
-        </div>
-
-        <!-- Emergency commands -->
-        <div class="card critical">
-          <h3> Disaster Commands</h3>
-          <p>Issue district-level emergency commands , Send notifications to all villages and officials.</p>
-          <a><button class="danger-btn" onclick="openForm()">Issue Command</button></a>
         </div>
 
 
@@ -358,9 +441,9 @@ $pinreports_json = json_encode($allPins);
       </form>
 
       <?php if (isset($_GET["success"])): ?>
-                                                  <script>
-                                                      alert("Command issued successfully!");
-                                                  </script>
+                                                          <script>
+                                                              alert("Command issued successfully!");
+                                                          </script>
       <?php endif; ?>
 
   </div>
@@ -383,21 +466,19 @@ $pinreports_json = json_encode($allPins);
               <label>Penghulu</label>
               <select name="penghulu_id" required>
                   <option value="">Select Penghulu</option>
-                  <?php while (
-                      $rowPenghulu = mysqli_fetch_assoc($resultPenghulu)
-                  ): ?>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              <option value="<?= htmlspecialchars(
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  $rowPenghulu[
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      "user_id"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ],
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ) ?>">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  <?= htmlspecialchars(
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      $rowPenghulu[
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          "user_name"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ],
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ) ?>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              </option>
-                  <?php endwhile; ?>
+                  <?php foreach ($dataPenghulu as $rowPenghulu): ?>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      <option value="<?= htmlspecialchars(
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          $rowPenghulu[
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              "user_id"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          ],
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ) ?>">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          <?= htmlspecialchars(
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              $rowPenghulu[
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  "user_name"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ],
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          ) ?>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      </option>
+                  <?php endforeach; ?>
               </select>
 
 
@@ -418,12 +499,38 @@ $pinreports_json = json_encode($allPins);
       </form>
 
       <?php if (isset($_GET["initiateaid_success"])): ?>
-                                                  <script>
-                                                      alert("Aid Command Issued Successfully!");
-                                                  </script>
+                                                          <script>
+                                                              alert("Aid Command Issued Successfully!");
+                                                          </script>
       <?php endif; ?>
 
   </div>
+
+  <?php if (!empty($message)): ?>
+                  <div class="modal-overlay">
+                      <div class="modal-box <?= $status === "success"
+                          ? "success"
+                          : "error" ?>">
+                          <div class="modal-icon">
+                              <?= $status === "success" ? "✔" : "❌" ?>
+                          </div>
+                          <p><?= htmlspecialchars($message) ?></p>
+                          <button onclick="closeModal()">OK</button>
+                      </div>
+                  </div>
+
+                  <?php if ($status === "success"): ?>
+                          <script>
+                              // Optional: Remove the 'success' query param from URL without refreshing so the modal doesn't show again on manual refresh
+                              if (window.history.replaceState) {
+                                  const url = new URL(window.location);
+                                  url.searchParams.delete('success');
+                                  url.searchParams.delete('success_reportpenghulu');
+                                  window.history.replaceState(null, '', url);
+                              }
+                          </script>
+                  <?php endif; ?>
+  <?php endif; ?>
 
 </body>
 
@@ -581,6 +688,10 @@ $pinreports_json = json_encode($allPins);
 
         function closeMap() {
             document.getElementById("mapModal").style.display = "none";
+        }
+
+        function closeModal() {
+            document.querySelector('.modal-overlay').style.display = 'none';
         }
     </script>
 
